@@ -9,38 +9,190 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppReportarRouteImport } from './routes/app.reportar'
+import { Route as AppRankingRouteImport } from './routes/app.ranking'
+import { Route as AppMeusReportesRouteImport } from './routes/app.meus-reportes'
+import { Route as AppDashboardRouteImport } from './routes/app.dashboard'
+import { Route as AppConfiguracoesRouteImport } from './routes/app.configuracoes'
+import { Route as AppCapacitacaoRouteImport } from './routes/app.capacitacao'
+import { Route as AppBadgesRouteImport } from './routes/app.badges'
+import { Route as AppAdminRouteImport } from './routes/app.admin'
+import { Route as AppAdminAnalyticsRouteImport } from './routes/app.admin.analytics'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppReportarRoute = AppReportarRouteImport.update({
+  id: '/reportar',
+  path: '/reportar',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRankingRoute = AppRankingRouteImport.update({
+  id: '/ranking',
+  path: '/ranking',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMeusReportesRoute = AppMeusReportesRouteImport.update({
+  id: '/meus-reportes',
+  path: '/meus-reportes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDashboardRoute = AppDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppConfiguracoesRoute = AppConfiguracoesRouteImport.update({
+  id: '/configuracoes',
+  path: '/configuracoes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCapacitacaoRoute = AppCapacitacaoRouteImport.update({
+  id: '/capacitacao',
+  path: '/capacitacao',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppBadgesRoute = AppBadgesRouteImport.update({
+  id: '/badges',
+  path: '/badges',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminRoute = AppAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAdminAnalyticsRoute = AppAdminAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AppAdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/login': typeof LoginRoute
+  '/app/admin': typeof AppAdminRouteWithChildren
+  '/app/badges': typeof AppBadgesRoute
+  '/app/capacitacao': typeof AppCapacitacaoRoute
+  '/app/configuracoes': typeof AppConfiguracoesRoute
+  '/app/dashboard': typeof AppDashboardRoute
+  '/app/meus-reportes': typeof AppMeusReportesRoute
+  '/app/ranking': typeof AppRankingRoute
+  '/app/reportar': typeof AppReportarRoute
+  '/app/admin/analytics': typeof AppAdminAnalyticsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/login': typeof LoginRoute
+  '/app/admin': typeof AppAdminRouteWithChildren
+  '/app/badges': typeof AppBadgesRoute
+  '/app/capacitacao': typeof AppCapacitacaoRoute
+  '/app/configuracoes': typeof AppConfiguracoesRoute
+  '/app/dashboard': typeof AppDashboardRoute
+  '/app/meus-reportes': typeof AppMeusReportesRoute
+  '/app/ranking': typeof AppRankingRoute
+  '/app/reportar': typeof AppReportarRoute
+  '/app/admin/analytics': typeof AppAdminAnalyticsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/app': typeof AppRouteWithChildren
+  '/login': typeof LoginRoute
+  '/app/admin': typeof AppAdminRouteWithChildren
+  '/app/badges': typeof AppBadgesRoute
+  '/app/capacitacao': typeof AppCapacitacaoRoute
+  '/app/configuracoes': typeof AppConfiguracoesRoute
+  '/app/dashboard': typeof AppDashboardRoute
+  '/app/meus-reportes': typeof AppMeusReportesRoute
+  '/app/ranking': typeof AppRankingRoute
+  '/app/reportar': typeof AppReportarRoute
+  '/app/admin/analytics': typeof AppAdminAnalyticsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/app'
+    | '/login'
+    | '/app/admin'
+    | '/app/badges'
+    | '/app/capacitacao'
+    | '/app/configuracoes'
+    | '/app/dashboard'
+    | '/app/meus-reportes'
+    | '/app/ranking'
+    | '/app/reportar'
+    | '/app/admin/analytics'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/app'
+    | '/login'
+    | '/app/admin'
+    | '/app/badges'
+    | '/app/capacitacao'
+    | '/app/configuracoes'
+    | '/app/dashboard'
+    | '/app/meus-reportes'
+    | '/app/ranking'
+    | '/app/reportar'
+    | '/app/admin/analytics'
+  id:
+    | '__root__'
+    | '/'
+    | '/app'
+    | '/login'
+    | '/app/admin'
+    | '/app/badges'
+    | '/app/capacitacao'
+    | '/app/configuracoes'
+    | '/app/dashboard'
+    | '/app/meus-reportes'
+    | '/app/ranking'
+    | '/app/reportar'
+    | '/app/admin/analytics'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +200,113 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app/reportar': {
+      id: '/app/reportar'
+      path: '/reportar'
+      fullPath: '/app/reportar'
+      preLoaderRoute: typeof AppReportarRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/ranking': {
+      id: '/app/ranking'
+      path: '/ranking'
+      fullPath: '/app/ranking'
+      preLoaderRoute: typeof AppRankingRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/meus-reportes': {
+      id: '/app/meus-reportes'
+      path: '/meus-reportes'
+      fullPath: '/app/meus-reportes'
+      preLoaderRoute: typeof AppMeusReportesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/dashboard': {
+      id: '/app/dashboard'
+      path: '/dashboard'
+      fullPath: '/app/dashboard'
+      preLoaderRoute: typeof AppDashboardRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/configuracoes': {
+      id: '/app/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/app/configuracoes'
+      preLoaderRoute: typeof AppConfiguracoesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/capacitacao': {
+      id: '/app/capacitacao'
+      path: '/capacitacao'
+      fullPath: '/app/capacitacao'
+      preLoaderRoute: typeof AppCapacitacaoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/badges': {
+      id: '/app/badges'
+      path: '/badges'
+      fullPath: '/app/badges'
+      preLoaderRoute: typeof AppBadgesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin': {
+      id: '/app/admin'
+      path: '/admin'
+      fullPath: '/app/admin'
+      preLoaderRoute: typeof AppAdminRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/admin/analytics': {
+      id: '/app/admin/analytics'
+      path: '/analytics'
+      fullPath: '/app/admin/analytics'
+      preLoaderRoute: typeof AppAdminAnalyticsRouteImport
+      parentRoute: typeof AppAdminRoute
+    }
   }
 }
 
+interface AppAdminRouteChildren {
+  AppAdminAnalyticsRoute: typeof AppAdminAnalyticsRoute
+}
+
+const AppAdminRouteChildren: AppAdminRouteChildren = {
+  AppAdminAnalyticsRoute: AppAdminAnalyticsRoute,
+}
+
+const AppAdminRouteWithChildren = AppAdminRoute._addFileChildren(
+  AppAdminRouteChildren,
+)
+
+interface AppRouteChildren {
+  AppAdminRoute: typeof AppAdminRouteWithChildren
+  AppBadgesRoute: typeof AppBadgesRoute
+  AppCapacitacaoRoute: typeof AppCapacitacaoRoute
+  AppConfiguracoesRoute: typeof AppConfiguracoesRoute
+  AppDashboardRoute: typeof AppDashboardRoute
+  AppMeusReportesRoute: typeof AppMeusReportesRoute
+  AppRankingRoute: typeof AppRankingRoute
+  AppReportarRoute: typeof AppReportarRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppAdminRoute: AppAdminRouteWithChildren,
+  AppBadgesRoute: AppBadgesRoute,
+  AppCapacitacaoRoute: AppCapacitacaoRoute,
+  AppConfiguracoesRoute: AppConfiguracoesRoute,
+  AppDashboardRoute: AppDashboardRoute,
+  AppMeusReportesRoute: AppMeusReportesRoute,
+  AppRankingRoute: AppRankingRoute,
+  AppReportarRoute: AppReportarRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
