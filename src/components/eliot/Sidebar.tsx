@@ -27,7 +27,7 @@ export function DesktopSidebar() {
     to === "/app/admin" ? pathname === to : pathname === to || pathname.startsWith(to + "/");
 
   return (
-    <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-border bg-sidebar">
+    <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-border bg-sidebar sticky top-0 h-screen">
       <div className="px-5 h-16 flex items-center border-b border-sidebar-border">
         <Link to="/app/dashboard"><Logo /></Link>
       </div>
