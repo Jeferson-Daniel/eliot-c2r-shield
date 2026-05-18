@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/app/dashboard")({
   head: () => ({ meta: [{ title: "Centro Operacional — ELIOT" }] }),
@@ -18,6 +20,8 @@ function Dashboard() {
   const { pct, current, next, toNext } = levelProgress(currentUser.xp);
   const ranking = [...users].sort((a, b) => b.xp - a.xp).slice(0, 5);
   const myBadges = BADGES.filter((b) => currentUser.badges.includes(b.slug)).slice(0, 4);
+
+  const [selectedBadge, setSelectedBadge] = useState<typeof BADGES[0] | null>(null);
 
   // Dicas reescritas como Radar Operacional
   const radarItems = [
@@ -184,19 +188,23 @@ function Dashboard() {
               </div>
             </Panel>
 
-            {/* 7. Emblemas Conquistados */}
-            <Panel title="Inventário de Emblemas" icon={<Award className="size-4.5 text-primary" />} action={<Link to="/app/badges" className="text-[0.7rem] font-bold uppercase tracking-widest text-primary hover:underline">Ver acervo</Link>}>
+            {/* 7. Reconhecimentos Institucionais */}
+            <Panel title="Reconhecimentos Institucionais" icon={<Award className="size-4.5 text-primary" />} action={<Link to="/app/badges" className="text-[0.7rem] font-bold uppercase tracking-widest text-primary hover:underline">Ver acervo</Link>}>
               <div className="grid grid-cols-2 gap-4 mt-2">
                 {myBadges.map((b) => (
-                  <div key={b.slug} className="group relative flex flex-col items-center justify-center rounded-[1.25rem] border border-border/80 bg-secondary/20 p-5 transition-all duration-300 hover:bg-card hover:border-primary/30 hover:shadow-sm overflow-hidden text-center">
+                  <button 
+                    key={b.slug} 
+                    onClick={() => setSelectedBadge(b)}
+                    className="group relative flex flex-col items-center justify-center rounded-[1.25rem] border border-border/80 bg-secondary/20 p-5 transition-all duration-300 hover:bg-card hover:border-primary/30 hover:shadow-sm overflow-hidden text-center cursor-pointer"
+                  >
                     <div className="relative z-10 flex flex-col items-center">
                       <div className="grid size-12 place-items-center rounded-2xl bg-background text-primary ring-1 ring-inset ring-border/50 mb-3 shadow-inner group-hover:bg-primary/10 group-hover:ring-primary/20 transition-colors mx-auto">
-                        <Award className="size-6" />
+                        <Award className="size-5" />
                       </div>
-                      <div className="text-xs font-bold tracking-tight">{b.name}</div>
-                      <div className="text-[0.6rem] font-semibold text-muted-foreground/80 mt-1">Conquista Institucional</div>
+                      <div className="text-xs font-bold tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-1">{b.name}</div>
+                      <div className="text-[0.6rem] font-semibold text-muted-foreground/80 mt-1">Mérito Acadêmico</div>
                     </div>
-                  </div>
+                  </button>
                 ))}
               </div>
             </Panel>
@@ -241,7 +249,7 @@ function Dashboard() {
             <ul className="space-y-5 mt-3">
               {[
                 { title: "Nova campanha de phishing identificada", body: "Disparos usando identidade da biblioteca bloqueados.", kind: "critical", time: "há 3 min" },
-                { title: "Seu reporte foi validado", body: "Recompensa de +150 XP creditada no seu perfil.", kind: "success", time: "há 20 min" },
+                { title: "Seu reporte foi validado", body: "Recompensa de engajamento creditada no seu perfil.", kind: "success", time: "há 20 min" },
                 { title: "Módulo de segurança atualizado", body: "Nova trilha sobre Engenharia Social disponível.", kind: "info", time: "há 1 h" },
                 { title: "Tentativa de acesso bloqueada", body: "Login suspeito impedido pelo MFA.", kind: "warning", time: "há 2 h" },
               ].map((n, idx) => (
@@ -282,6 +290,61 @@ function Dashboard() {
 
         </div>
       </div>
+
+      {/* Drawer de Detalhes do Reconhecimento */}
+      <Sheet open={!!selectedBadge} onOpenChange={(o) => !o && setSelectedBadge(null)}>
+        <SheetContent className="w-full sm:max-w-md overflow-y-auto p-0 border-l border-border/60">
+          {selectedBadge && (
+            <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+              <SheetHeader className="px-6 py-8 border-b border-border/60 bg-secondary/10 flex flex-col items-center text-center">
+                <div className="grid size-16 place-items-center rounded-[1.25rem] bg-background text-primary ring-1 ring-inset ring-border/50 mb-4 shadow-sm">
+                  <Award className="size-7" />
+                </div>
+                <div className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/80 mb-2">Reconhecimento Institucional</div>
+                <SheetTitle className="font-display text-2xl font-bold tracking-tight">{selectedBadge.name}</SheetTitle>
+              </SheetHeader>
+
+              <div className="p-6 space-y-8">
+                <section>
+                  <div className="text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground mb-3">Contexto da Conquista</div>
+                  <p className="text-sm leading-relaxed text-foreground/90">
+                    Este reconhecimento é concedido por participação ativa na identificação de ocorrências, fortalecendo as barreiras de segurança e a cultura preventiva da nossa instituição.
+                  </p>
+                </section>
+
+                <section className="rounded-2xl border border-border/80 bg-card p-5 shadow-sm space-y-4">
+                  <div>
+                    <div className="text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground mb-1">Critério de Obtenção</div>
+                    <div className="text-sm font-medium text-foreground">{selectedBadge.description}</div>
+                  </div>
+                  <div className="h-px w-full bg-border/60" />
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground mb-1">Impacto Gerado</div>
+                      <div className="text-xs font-semibold text-primary">Prevenção e Alerta</div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground mb-1">Data</div>
+                      <div className="text-xs font-semibold text-foreground">Out 2023</div>
+                    </div>
+                  </div>
+                </section>
+
+                <section className="flex items-center gap-3.5 rounded-xl bg-success/10 border border-success/20 p-5">
+                  <div className="grid size-10 place-items-center rounded-lg bg-success/20 text-success shrink-0">
+                    <CheckCircle2 className="size-5" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-success tracking-tight mb-0.5">Mérito Concedido</div>
+                    <div className="text-xs font-medium text-success/80 leading-relaxed">Este reconhecimento foi validado e registrado pelo comitê de segurança digital.</div>
+                  </div>
+                </section>
+              </div>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
+
     </div>
   );
 }
