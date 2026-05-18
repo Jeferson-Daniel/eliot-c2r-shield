@@ -43,7 +43,7 @@ function Settings() {
 
       {/* Header Institucional Forte */}
       <div className="relative rounded-[1.5rem] border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 sm:p-8 overflow-hidden shadow-sm transition-all hover:border-primary/30">
-        <div className="absolute -top-20 -right-20 size-64 bg-primary/20 blur-[70px] rounded-full pointer-events-none" />
+        <div className="absolute -top-20 -right-20 size-64 bg-primary/5 blur-[40px] rounded-full pointer-events-none" />
         
         <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-6">
           <div className="relative shrink-0">

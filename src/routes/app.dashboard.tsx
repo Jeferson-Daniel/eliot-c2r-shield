@@ -65,7 +65,7 @@ function Dashboard() {
 
       {/* 2. Card Principal do Usuário (Operacional) */}
       <div className="relative overflow-hidden rounded-[1.5rem] border border-primary/20 bg-card/60 backdrop-blur-xl shadow-lg ring-soft group">
-        <div className="absolute -top-40 -left-40 size-96 bg-primary/20 blur-[100px] rounded-full pointer-events-none transition-opacity duration-1000 group-hover:opacity-70" />
+        <div className="absolute -top-40 -left-40 size-96 bg-primary/5 blur-[40px] rounded-full pointer-events-none transition-opacity duration-1000 group-hover:opacity-70" />
         <div className="relative p-6 md:p-8 flex flex-col lg:flex-row gap-8 lg:items-center justify-between">
           
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 w-full lg:w-auto">
@@ -214,8 +214,8 @@ function Dashboard() {
         {/* Coluna Lateral: 1/3 da largura no desktop */}
         <div className="flex flex-col gap-6 lg:gap-8">
           
-          {/* 4. Top Engajamento */}
-          <Panel title="Top Engajamento" icon={<TrendingUp className="size-4.5 text-primary" />} action={<Link to="/app/ranking" className="text-[0.7rem] font-bold uppercase tracking-widest text-primary hover:underline">Ranking Geral</Link>}>
+          {/* 4. Quadro de Honra */}
+          <Panel title="Quadro de Honra" icon={<TrendingUp className="size-4.5 text-primary" />} action={<Link to="/app/ranking" className="text-[0.7rem] font-bold uppercase tracking-widest text-primary hover:underline">Ver Tabela</Link>}>
             <ol className="space-y-3 mt-2">
               {ranking.map((u, i) => {
                 const isTop1 = i === 0;
@@ -244,12 +244,12 @@ function Dashboard() {
             </ol>
           </Panel>
 
-          {/* 5. Alertas Institucionais (Feed Operacional) */}
-          <Panel className="flex-1" title="Feed Operacional" icon={<Bell className="size-4.5 text-primary" />}>
+          {/* 5. Alertas Institucionais (Monitoramento Contínuo) */}
+          <Panel className="flex-1" title="Monitoramento Contínuo" icon={<Bell className="size-4.5 text-primary" />}>
             <ul className="space-y-5 mt-3">
               {[
                 { title: "Nova campanha de phishing identificada", body: "Disparos usando identidade da biblioteca bloqueados.", kind: "critical", time: "há 3 min" },
-                { title: "Seu reporte foi validado", body: "Recompensa de engajamento creditada no seu perfil.", kind: "success", time: "há 20 min" },
+                { title: "Seu reporte foi validado", body: "A ocorrência foi confirmada pelo SOC.", kind: "success", time: "há 20 min" },
                 { title: "Módulo de segurança atualizado", body: "Nova trilha sobre Engenharia Social disponível.", kind: "info", time: "há 1 h" },
                 { title: "Tentativa de acesso bloqueada", body: "Login suspeito impedido pelo MFA.", kind: "warning", time: "há 2 h" },
               ].map((n, idx) => (
@@ -352,7 +352,7 @@ function Dashboard() {
 function Panel({ title, icon, action, children, className }: { title: string; icon?: React.ReactNode; action?: React.ReactNode; children: React.ReactNode; className?: string }) {
   return (
     <section className={cn("rounded-[1.5rem] border border-border/80 bg-card/60 backdrop-blur-xl p-5 sm:p-7 shadow-sm transition-all hover:shadow-lg hover:border-primary/30 flex flex-col group/panel relative overflow-hidden", className)}>
-      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[80px] rounded-full pointer-events-none opacity-0 group-hover/panel:opacity-100 transition-opacity duration-700" />
+      <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[40px] rounded-full pointer-events-none opacity-0 group-hover/panel:opacity-100 transition-opacity duration-700" />
       <div className="relative z-10 flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
           {icon && <div className="grid place-items-center size-9 rounded-xl bg-secondary/80 ring-1 ring-inset ring-border/50 shadow-inner transition-transform group-hover/panel:scale-110 group-hover/panel:bg-primary/10 group-hover/panel:ring-primary/20">{icon}</div>}

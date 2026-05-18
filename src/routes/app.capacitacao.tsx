@@ -50,7 +50,7 @@ function CapacitacaoPage() {
           <div className="relative z-10 h-2 w-full mt-5 bg-background/60 rounded-full overflow-hidden shadow-inner">
             <div className="h-full bg-primary rounded-full transition-all duration-1000" style={{ width: `${overallPct}%` }} />
           </div>
-          <div className="absolute -right-10 -bottom-10 size-48 bg-primary/20 blur-[50px] rounded-full pointer-events-none" />
+          <div className="absolute -right-10 -bottom-10 size-48 bg-primary/5 blur-[30px] rounded-full pointer-events-none" />
         </div>
 
         <div className="rounded-[1.5rem] border border-border/80 bg-card p-6 flex flex-col justify-center transition-all hover:shadow-md hover:-translate-y-0.5 hover:border-border">
@@ -91,8 +91,8 @@ function CapacitacaoPage() {
               )}
             >
               {/* Decorative Glows */}
-              {isCompleted && <div className="absolute -top-20 -right-20 size-48 bg-success/10 blur-[50px] rounded-full pointer-events-none transition-colors duration-500 group-hover:bg-success/20" />}
-              {isInProgress && <div className="absolute -top-20 -right-20 size-48 bg-primary/10 blur-[50px] rounded-full pointer-events-none transition-colors duration-500 group-hover:bg-primary/20" />}
+              {isCompleted && <div className="absolute -top-20 -right-20 size-48 bg-success/10 blur-[30px] rounded-full pointer-events-none transition-colors duration-500 group-hover:bg-success/20" />}
+              {isInProgress && <div className="absolute -top-20 -right-20 size-48 bg-primary/10 blur-[30px] rounded-full pointer-events-none transition-colors duration-500 group-hover:bg-primary/20" />}
 
               <div className="relative">
                 <div className="flex items-start justify-between mb-5 gap-4">

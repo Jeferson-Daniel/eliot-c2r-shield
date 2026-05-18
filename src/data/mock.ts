@@ -34,16 +34,16 @@ export function levelProgress(xp: number): { pct: number; current: Level; next: 
 }
 
 export const BADGES: UserBadge[] = [
-  { slug: "primeiro-reporte", name: "Primeiro Reporte", description: "Registrou seu primeiro incidente." },
-  { slug: "cacador-phishing", name: "Caçador de Phishing", description: "Identificou 5+ tentativas de phishing." },
-  { slug: "alerta-preventivo", name: "Alerta Preventivo", description: "Reportou ameaça antes de afetar a instituição." },
-  { slug: "colaborador-ativo", name: "Colaborador Ativo", description: "Mantém-se ativo por 30 dias consecutivos." },
-  { slug: "guardiao-seguranca", name: "Guardião da Segurança", description: "Atingiu 5.000 pontos protegendo a comunidade." },
-  { slug: "olhar-clinico", name: "Olhar Clínico", description: "Detalhou um reporte com evidências completas." },
-  { slug: "mentor-digital", name: "Mentor Digital", description: "Concluiu todas as trilhas de capacitação." },
-  { slug: "resposta-rapida", name: "Resposta Rápida", description: "Reportou um incidente em menos de 2 minutos." },
-  { slug: "sentinela-noturna", name: "Sentinela Noturna", description: "Reportou ameaça fora do horário comercial." },
-  { slug: "guardiao-dados", name: "Guardião de Dados", description: "Identificou tentativa de vazamento de dados." },
+  { slug: "primeiro-reporte", name: "Primeiro Reporte", description: "Registrou seu primeiro incidente e colaborou com a triagem." },
+  { slug: "cacador-phishing", name: "Caçador de Phishing", description: "Identificou e reportou 5+ tentativas de phishing institucional." },
+  { slug: "alerta-preventivo", name: "Alerta Preventivo", description: "Reportou uma vulnerabilidade crítica antes de qualquer dano à rede." },
+  { slug: "colaborador-ativo", name: "Monitoramento Contínuo", description: "Mantém-se ativo no painel de monitoramento por 30 dias consecutivos." },
+  { slug: "guardiao-seguranca", name: "Referência Institucional", description: "Atingiu pontuação exemplar protegendo os sistemas acadêmicos." },
+  { slug: "olhar-clinico", name: "Análise Criteriosa", description: "Enviou um reporte contendo evidências, links e cabeçalhos detalhados." },
+  { slug: "mentor-digital", name: "Capacitação Concluída", description: "Finalizou todos os módulos de boas práticas e conscientização." },
+  { slug: "resposta-rapida", name: "Tempo de Resposta", description: "Reportou um incidente em tempo hábil para bloqueio de firewall." },
+  { slug: "sentinela-noturna", name: "Vigilância Estendida", description: "Reportou um acesso anômalo fora do expediente acadêmico." },
+  { slug: "guardiao-dados", name: "Proteção de Dados (LGPD)", description: "Identificou e preveniu a exposição indevida de dados sensíveis." },
 ];
 
 export const currentUser: AppUser = {
@@ -72,21 +72,28 @@ export const users: AppUser[] = [
 ];
 
 const categories: IncidentCategory[] = [
-  "Phishing", "Malware", "Link suspeito", "Engenharia social",
-  "Vazamento de dados", "Acesso indevido", "Anexo suspeito", "Outro",
-];
+  "Phishing Institucional", "Infraestrutura Física", "Acesso Suspeito", "Engenharia Social",
+  "Vazamento de Dados", "Fraude Financeira", "Malware / Ransomware", "Outro",
+] as const;
 const severities: IncidentSeverity[] = ["Baixa", "Média", "Alta", "Crítica"];
 const statuses: IncidentStatus[] = ["Pendente", "Em análise", "Validado", "Rejeitado", "Concluído"];
 
-const titles = [
-  "E-mail suspeito solicitando senha", "Link encurtado recebido por WhatsApp",
-  "Anexo .exe em mensagem institucional", "Tentativa de login fora do horário",
-  "Página falsa do SIGAA", "Pedido de PIX por suposto chefe",
-  "Arquivo com vírus no Drive compartilhado", "Spam recorrente no e-mail institucional",
-  "Site clonado da biblioteca", "Mensagem se passando pela reitoria",
-  "QR code suspeito no mural", "Acesso indevido ao laboratório virtual",
-  "Vazamento de planilha com matrículas", "Engenharia social via telefone",
-  "Pendrive desconhecido na sala dos professores",
+const mockScenarios = [
+  { title: "E-mail falso solicitando renovação de credenciais do SIGAA", cat: "Phishing Institucional", link: "https://sigaa-renovacao-institucional.net" },
+  { title: "Pedido de PIX falso via WhatsApp em nome da Coordenação", cat: "Fraude Financeira" },
+  { title: "Múltiplas tentativas de login no portal docente (IP externo)", cat: "Acesso Suspeito" },
+  { title: "QR Code suspeito colado sobre informativo no bloco central", cat: "Infraestrutura Física" },
+  { title: "Planilha com dados e CPFs de alunos aberta no Google Drive", cat: "Vazamento de Dados", link: "https://docs.google.com/spreadsheets/d/public-share" },
+  { title: "Compartilhamento externo não autorizado em pasta administrativa", cat: "Vazamento de Dados" },
+  { title: "Falso suporte técnico solicitando acesso remoto (AnyDesk)", cat: "Engenharia Social" },
+  { title: "Anexo malicioso (.exe) simulando boleto de matrícula/taxa", cat: "Malware / Ransomware", link: "boleto_mensalidade_05.exe" },
+  { title: "Convite suspeito para reunião urgente no Microsoft Teams", cat: "Phishing Institucional" },
+  { title: "Desativação inesperada do MFA na conta administrativa", cat: "Acesso Suspeito" },
+  { title: "Roteador Wi-Fi clandestino detectado na biblioteca", cat: "Infraestrutura Física" },
+  { title: "Acesso em horário atípico (03:45) no laboratório de pesquisa", cat: "Acesso Suspeito" },
+  { title: "Link encurtado suspeito enviado no grupo oficial do curso", cat: "Phishing Institucional", link: "https://bit.ly/matricula-urgente" },
+  { title: "E-mail com ameaça de suspensão de bolsa se não atualizar dados", cat: "Engenharia Social" },
+  { title: "Pendrive não identificado na sala de servidores do CTIC", cat: "Infraestrutura Física" },
 ];
 
 function daysAgo(n: number): string {
@@ -97,7 +104,7 @@ function daysAgo(n: number): string {
 
 export const incidents: Incident[] = Array.from({ length: 24 }).map((_, i) => {
   const u = users[i % users.length];
-  const cat = categories[i % categories.length];
+  const scenario = mockScenarios[i % mockScenarios.length];
   const sev = severities[i % severities.length];
   const st = statuses[i % statuses.length];
   const points = st === "Validado" || st === "Concluído"
@@ -105,16 +112,15 @@ export const incidents: Incident[] = Array.from({ length: 24 }).map((_, i) => {
     : undefined;
   return {
     id: `INC-${String(2026000 + i).padStart(7, "0")}`,
-    title: titles[i % titles.length],
-    description:
-      "Descrição detalhada do incidente reportado pelo usuário, incluindo contexto, horário aproximado e canal pelo qual a ameaça foi recebida. O denunciante anexou evidências para apoiar a análise da equipe.",
-    category: cat,
+    title: scenario.title,
+    description: "Descrição registrada pelo denunciante através do portal. O contexto e os detalhes fornecidos (hora, canal, mensagens anexas) estão sendo utilizados pela equipe do SOC acadêmico para compor a análise preliminar e determinar a necessidade de bloqueio ou notificação em massa.",
+    category: scenario.cat as IncidentCategory,
     severity: sev,
     status: st,
     reporterId: u.id,
     reporterName: u.name,
     reporterRole: u.role,
-    link: i % 2 === 0 ? "https://www.acesso-institucional-falso.example/login" : undefined,
+    link: scenario.link,
     createdAt: daysAgo(i * 3 + 1),
     points,
     attachments: i % 3 === 0 ? [{ name: "evidencia.png", size: 124_500 }] : [],
@@ -127,55 +133,55 @@ export const myIncidents: Incident[] = incidents
   .map((inc) => ({ ...inc, reporterId: currentUser.id, reporterName: currentUser.name, reporterRole: currentUser.role }));
 
 export const notifications: Notification[] = [
-  { id: "n1", title: "Reporte validado", body: "Seu reporte sobre link suspeito foi validado (+150 pontos).", createdAt: daysAgo(0), kind: "success" },
-  { id: "n2", title: "Alerta institucional", body: "Detectada nova campanha de phishing contra contas .edu. Atenção redobrada.", createdAt: daysAgo(1), kind: "warning" },
-  { id: "n3", title: "Nova trilha disponível", body: "‘Engenharia social no ambiente acadêmico’ acaba de ser publicada.", createdAt: daysAgo(2), kind: "info" },
-  { id: "n4", title: "Incidente crítico próximo", body: "Um incidente crítico foi reportado no seu setor.", createdAt: daysAgo(3), kind: "critical" },
+  { id: "n1", title: "Ocorrência validada", body: "Sua ocorrência sobre link suspeito foi validada pelo SOC (+150 pontos).", createdAt: daysAgo(0), kind: "success" },
+  { id: "n2", title: "Aviso Institucional", body: "Detectada campanha de phishing envolvendo falsos boletos. Atenção redobrada.", createdAt: daysAgo(1), kind: "warning" },
+  { id: "n3", title: "Nova trilha de conscientização", body: "Módulo sobre 'Engenharia Social no Campus' publicado.", createdAt: daysAgo(2), kind: "info" },
+  { id: "n4", title: "Alerta Crítico", body: "Um incidente crítico envolvendo vazamento de dados foi reportado no seu setor.", createdAt: daysAgo(3), kind: "critical" },
 ];
 
 export const trainings: Training[] = [
   {
-    id: "t-phishing", title: "Phishing: identifique antes de clicar", description: "Aprenda a reconhecer e-mails, sites e mensagens fraudulentas.",
-    durationMin: 12, category: "Conscientização", progress: 80,
+    id: "t-phishing", title: "Phishing Institucional: Identificação e Resposta", description: "Aprenda a reconhecer comunicados fraudulentos fingindo ser a Reitoria ou Biblioteca.",
+    durationMin: 12, category: "Prevenção", progress: 80,
     lessons: [
-      { title: "O que é phishing", body: "Phishing é a tentativa de obter informações sensíveis fingindo ser uma fonte confiável. No ambiente acadêmico, costuma se passar por reitoria, biblioteca, sistemas internos e bancos." },
+      { title: "O que é phishing", body: "É a tentativa de obter informações sensíveis fingindo ser uma fonte confiável. No ambiente acadêmico, costuma se passar por reitoria, biblioteca, sistemas internos e bancos." },
       { title: "Sinais clássicos", body: "Senso de urgência, erros sutis no remetente, domínios trocados, anexos inesperados e pedidos de senha são sinais clássicos." },
-      { title: "Como agir", body: "Não clique, não responda, encaminhe o caso via ELIOT e, se possível, anexe o cabeçalho da mensagem." },
+      { title: "Como agir", body: "Não clique, não responda, encaminhe o caso via sistema de triagem e, se possível, anexe o cabeçalho da mensagem." },
     ],
   },
   {
-    id: "t-links", title: "Links suspeitos no dia a dia", description: "Como inspecionar URLs antes de abrir.",
-    durationMin: 8, category: "Capacitação", progress: 40,
+    id: "t-links", title: "Análise de Links e Encurtadores", description: "Boas práticas para inspecionar URLs suspeitas e links enviados via WhatsApp.",
+    durationMin: 8, category: "Análise Técnica", progress: 40,
     lessons: [
       { title: "Anatomia de uma URL", body: "Aprenda a ler o domínio principal, subdomínios e parâmetros de uma URL." },
       { title: "Encurtadores", body: "Use pré-visualizadores antes de abrir links encurtados recebidos por canais não verificados." },
     ],
   },
   {
-    id: "t-senhas", title: "Senhas fortes e gerenciadores", description: "Construa senhas únicas e armazene-as com segurança.",
-    durationMin: 10, category: "Boas práticas", progress: 100,
+    id: "t-senhas", title: "Gestão de Identidade e MFA", description: "Proteção de credenciais acadêmicas e a importância da Autenticação em Múltiplos Fatores.",
+    durationMin: 10, category: "Políticas Internas", progress: 100,
     lessons: [
       { title: "Frases-senha", body: "Combine quatro palavras incomuns para criar uma senha forte e memorável." },
       { title: "Gerenciadores", body: "Use um gerenciador para que cada serviço tenha uma senha única." },
     ],
   },
   {
-    id: "t-engsocial", title: "Engenharia social no ambiente acadêmico", description: "Pressões emocionais, autoridade e urgência.",
+    id: "t-engsocial", title: "Engenharia Social no Ambiente Acadêmico", description: "Pressões emocionais, abuso de autoridade por falsos coordenadores.",
     durationMin: 15, category: "Conscientização", progress: 0,
     lessons: [
       { title: "Gatilhos comuns", body: "Autoridade, urgência, reciprocidade e prova social são os gatilhos mais explorados." },
-      { title: "Como responder", body: "Desacelere, confirme por outro canal e relate via ELIOT." },
+      { title: "Como responder", body: "Desacelere, confirme por outro canal e relate à segurança corporativa." },
     ],
   },
   {
-    id: "t-anexos", title: "Cuidados com anexos", description: "Tipos de arquivo, macros e isolamento.",
-    durationMin: 7, category: "Capacitação", progress: 20,
+    id: "t-anexos", title: "Tratamento de Anexos Maliciosos", description: "Identificação de planilhas e PDFs contendo macros ou scripts ocultos.",
+    durationMin: 7, category: "Prevenção", progress: 20,
     lessons: [{ title: "Extensões de risco", body: "Atenção a .exe, .scr, .js, .vbs, .iso e documentos com macros." }],
   },
   {
-    id: "t-reportar", title: "Como reportar corretamente", description: "Boas práticas para registrar incidentes no ELIOT.",
-    durationMin: 6, category: "Capacitação", progress: 60,
-    lessons: [{ title: "O que descrever", body: "Inclua data, hora, canal, conteúdo e prints. Quanto melhor o reporte, mais rápida a resposta." }],
+    id: "t-reportar", title: "Como redigir um reporte pericial", description: "Boas práticas para registrar ocorrências para o SOC institucional.",
+    durationMin: 6, category: "Procedimento", progress: 60,
+    lessons: [{ title: "O que descrever", body: "Inclua data, hora, canal, conteúdo e prints. Quanto melhor a evidência, mais rápida a resposta." }],
   },
 ];
 
@@ -187,17 +193,19 @@ export const monthlyVolume = [
 ];
 
 export const typeDistribution = [
-  { name: "Phishing", value: 42 },
-  { name: "Link suspeito", value: 28 },
-  { name: "Engenharia social", value: 12 },
-  { name: "Malware", value: 9 },
-  { name: "Outros", value: 9 },
+  { name: "Phishing Institucional", value: 42 },
+  { name: "Acesso Suspeito", value: 28 },
+  { name: "Engenharia Social", value: 12 },
+  { name: "Vazamento de Dados", value: 9 },
+  { name: "Infraestrutura Física", value: 9 },
 ];
 
 export const adminKpis = {
+  mttr: "45 min",
+  falsePositivesRate: "8%",
+  mfaAdoption: "78%",
   pending: 14,
   completed: 722,
   rejected: 86,
-  pointsDistributed: 28_000,
   light: 134, moderate: 590, critical: 98, resolutionRate: 96,
 };

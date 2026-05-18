@@ -2,7 +2,7 @@ import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-rout
 import { PageHeader } from "@/components/eliot/AppShell";
 import { adminKpis, monthlyVolume, typeDistribution } from "@/data/mock";
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { AlertOctagon, CheckCircle2, Coins, XCircle, ShieldAlert, ShieldCheck, ListFilter } from "lucide-react";
+import { AlertOctagon, CheckCircle2, Clock, Smartphone, XCircle, ShieldAlert, ShieldCheck, ListFilter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/app/admin")({
@@ -37,10 +37,10 @@ function AdminWrapper() {
 
       {/* Grid de KPIs principais */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Kpi label="Incidentes Pendentes" value={adminKpis.pending} tone="warning" Icon={AlertOctagon} />
         <Kpi label="Incidentes Resolvidos" value={adminKpis.completed} tone="success" Icon={CheckCircle2} />
-        <Kpi label="Descartados/Falsos" value={adminKpis.rejected} tone="destructive" Icon={XCircle} />
-        <Kpi label="Pontos Distribuídos" value={adminKpis.pointsDistributed.toLocaleString("pt-BR")} tone="primary" Icon={Coins} />
+        <Kpi label="Tempo Médio de Resposta" value={adminKpis.mttr} tone="primary" Icon={Clock} />
+        <Kpi label="Adoção de MFA" value={adminKpis.mfaAdoption} tone="info" Icon={Smartphone} />
+        <Kpi label="Taxa de Falsos Positivos" value={adminKpis.falsePositivesRate} tone="warning" Icon={XCircle} />
       </div>
 
       {/* Gráficos */}
@@ -104,11 +104,12 @@ function AdminWrapper() {
   );
 }
 
-function Kpi({ label, value, tone, Icon }: { label: string; value: React.ReactNode; tone: "warning" | "success" | "destructive" | "primary"; Icon: React.ComponentType<{ className?: string }> }) {
+function Kpi({ label, value, tone, Icon }: { label: string; value: React.ReactNode; tone: "warning" | "success" | "destructive" | "primary" | "info"; Icon: React.ComponentType<{ className?: string }> }) {
   const styles = {
     primary: { text: "text-primary", bg: "bg-primary/10", ring: "ring-primary/25", border: "border-primary/20" },
     success: { text: "text-success", bg: "bg-success/10", ring: "ring-success/25", border: "border-success/20" },
     warning: { text: "text-warning", bg: "bg-warning/10", ring: "ring-warning/25", border: "border-warning/20" },
+    info: { text: "text-info", bg: "bg-info/10", ring: "ring-info/25", border: "border-info/20" },
     destructive: { text: "text-destructive", bg: "bg-destructive/10", ring: "ring-destructive/25", border: "border-destructive/20" },
   };
   const s = styles[tone];

@@ -50,7 +50,7 @@ function RankingPage() {
               )}
 
               {/* Decorative background glow for 1st */}
-              {isFirst && <div className="absolute top-10 size-32 bg-yellow-500/20 blur-[40px] rounded-full pointer-events-none" />}
+              {isFirst && <div className="absolute top-10 size-32 bg-yellow-500/10 blur-[20px] rounded-full pointer-events-none" />}
 
               <div className="relative mx-auto w-fit mt-2 sm:mt-0">
                 <Avatar name={u.name} size={isFirst ? 84 : 64} />

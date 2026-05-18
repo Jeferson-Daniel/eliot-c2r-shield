@@ -97,7 +97,7 @@ function ReportPage() {
           severityColors[severity]
         )}>
           {/* Background Glow Baseado na Severidade */}
-          <div className={cn("absolute -top-32 -right-32 size-96 blur-[100px] rounded-full pointer-events-none transition-colors duration-1000 opacity-60", bgGlow[severity])} />
+          <div className={cn("absolute -top-32 -right-32 size-96 blur-[60px] rounded-full pointer-events-none transition-colors duration-1000 opacity-20", bgGlow[severity])} />
 
           <div className="relative z-10 space-y-8">
             <div className="space-y-2 group">
