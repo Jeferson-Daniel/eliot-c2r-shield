@@ -1,118 +1,177 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHeader } from "@/components/eliot/AppShell";
-import { adminKpis, monthlyVolume, typeDistribution } from "@/data/mock";
-import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { AlertOctagon, CheckCircle2, Coins, XCircle, ShieldAlert, ShieldCheck } from "lucide-react";
+import { StatusBadge, SeverityPill, CategoryChip } from "@/components/eliot/StatusBits";
+import { incidents } from "@/data/mock";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Search, Filter, MoreVertical, MessageSquare, Check, X, ArrowLeft } from "lucide-react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useState } from "react";
+import type { Incident } from "@/types/eliot";
+import { toast } from "sonner";
+import { Avatar } from "@/components/eliot/Sidebar";
+import { Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/app/admin/analytics")({
-  head: () => ({ meta: [{ title: "Analytics — ELIOT" }] }),
-  component: Analytics,
+  head: () => ({ meta: [{ title: "Gestão Operacional — ELIOT" }] }),
+  component: AnalyticsOperationalPage,
 });
 
-const COLORS = ["oklch(0.82 0.14 210)", "oklch(0.73 0.17 150)", "oklch(0.78 0.16 290)", "oklch(0.82 0.15 80)", "oklch(0.66 0.21 25)"];
+function AnalyticsOperationalPage() {
+  const [selected, setSelected] = useState<Incident | null>(null);
+  const [query, setQuery] = useState("");
 
-function Analytics() {
+  const filtered = incidents.filter((i) =>
+    [i.title, i.category, i.reporterName, i.id].join(" ").toLowerCase().includes(query.toLowerCase())
+  );
+
   return (
-    <div className="mx-auto max-w-7xl p-5 md:p-8 space-y-8">
+    <div className="mx-auto max-w-7xl p-4 sm:p-6 md:p-8 space-y-6 md:space-y-8 animate-in fade-in duration-500">
       <PageHeader
-        eyebrow="Analytics"
-        title="Monitoramento institucional"
-        description="Visão consolidada do volume, tipos e severidade de incidentes notificados pela comunidade."
+        eyebrow="Triagem e Análise"
+        title="Gestão Operacional de Incidentes"
+        description="Lista completa, filtros, severidade e fluxo de resolução das notificações reportadas."
+        actions={
+          <Button asChild variant="outline" className="gap-2 transition-all hover:bg-secondary/60">
+            <Link to="/app/admin"><ArrowLeft className="size-4" /> Voltar ao Painel Executivo</Link>
+          </Button>
+        }
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Kpi label="Pendentes" value={adminKpis.pending} tone="warning" Icon={AlertOctagon} />
-        <Kpi label="Concluídas" value={adminKpis.completed} tone="success" Icon={CheckCircle2} />
-        <Kpi label="Descartadas" value={adminKpis.rejected} tone="destructive" Icon={XCircle} />
-        <Kpi label="Pontos distribuídos" value={adminKpis.pointsDistributed.toLocaleString("pt-BR")} tone="primary" Icon={Coins} />
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-3">
-        <section className="lg:col-span-2 rounded-2xl border border-border bg-card p-5 ring-soft">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="font-medium">Volume de notificações</h3>
-              <p className="text-xs text-muted-foreground">Últimos 12 meses</p>
-            </div>
+      <div className="rounded-2xl border border-border/80 bg-card shadow-sm overflow-hidden">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-5 border-b border-border bg-card/50">
+          <div className="relative flex-1 min-w-[200px]">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Buscar por título, ID, categoria ou denunciante…" className="pl-10 h-10 bg-background shadow-sm" />
           </div>
-          <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={monthlyVolume} margin={{ left: -10, right: 0, top: 10, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="oklch(1 0 0 / 0.06)" vertical={false} />
-                <XAxis dataKey="month" stroke="oklch(0.7 0.02 250)" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="oklch(0.7 0.02 250)" fontSize={11} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{ background: "oklch(0.22 0.028 258)", border: "1px solid oklch(1 0 0 / 0.1)", borderRadius: 10, fontSize: 12 }} cursor={{ fill: "oklch(1 0 0 / 0.04)" }} />
-                <Bar dataKey="value" radius={[6, 6, 0, 0]} fill="oklch(0.82 0.14 210)" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </section>
+          <Button variant="outline" className="gap-2 h-10 shrink-0"><Filter className="size-4" /> Filtros Avançados</Button>
+        </div>
 
-        <section className="rounded-2xl border border-border bg-card p-5 ring-soft">
-          <h3 className="font-medium">Tipos de notificações</h3>
-          <p className="text-xs text-muted-foreground mb-2">Distribuição por categoria</p>
-          <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={typeDistribution} dataKey="value" nameKey="name" innerRadius={55} outerRadius={90} paddingAngle={3} stroke="oklch(0.17 0.025 258)">
-                  {typeDistribution.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
-                </Pie>
-                <Tooltip contentStyle={{ background: "oklch(0.22 0.028 258)", border: "1px solid oklch(1 0 0 / 0.1)", borderRadius: 10, fontSize: 12 }} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-          <ul className="mt-3 space-y-1.5">
-            {typeDistribution.map((t, i) => (
-              <li key={t.name} className="flex items-center justify-between text-xs">
-                <span className="flex items-center gap-2"><span className="size-2 rounded-sm" style={{ background: COLORS[i % COLORS.length] }} /> {t.name}</span>
-                <span className="tabular-nums text-muted-foreground">{t.value}%</span>
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <SeverityCard label="Leves" value={adminKpis.light} tone="info" />
-        <SeverityCard label="Moderadas" value={adminKpis.moderate} tone="warning" />
-        <SeverityCard label="Críticas" value={adminKpis.critical} tone="destructive" />
-        <div className="rounded-2xl border border-border bg-card p-5 ring-soft">
-          <div className="grid size-9 place-items-center rounded-lg bg-success/10 text-success ring-1 ring-inset ring-success/25 mb-3"><ShieldCheck className="size-4" /></div>
-          <div className="font-display text-2xl tabular-nums">{adminKpis.resolutionRate}%</div>
-          <div className="text-xs text-muted-foreground mt-1">Taxa de resolução de problemas</div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="text-xs uppercase tracking-wider text-muted-foreground bg-secondary/20">
+              <tr>
+                <th className="text-left px-5 py-4 font-semibold">Incidente</th>
+                <th className="text-left px-5 py-4 font-semibold hidden md:table-cell">Denunciante</th>
+                <th className="text-left px-5 py-4 font-semibold hidden lg:table-cell">Data</th>
+                <th className="text-left px-5 py-4 font-semibold">Severidade</th>
+                <th className="text-left px-5 py-4 font-semibold">Status</th>
+                <th className="w-12"></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/60">
+              {filtered.map((inc) => (
+                <tr
+                  key={inc.id}
+                  onClick={() => setSelected(inc)}
+                  className="hover:bg-muted/40 cursor-pointer transition-colors group"
+                >
+                  <td className="px-5 py-4">
+                    <div className="font-medium text-foreground group-hover:text-primary transition-colors">{inc.title}</div>
+                    <div className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
+                      <span className="font-mono">{inc.id}</span>
+                      <span className="size-1 rounded-full bg-border" />
+                      <CategoryChip category={inc.category} />
+                    </div>
+                  </td>
+                  <td className="px-5 py-4 hidden md:table-cell">
+                    <div className="flex items-center gap-2.5">
+                      <Avatar name={inc.reporterName} size={28} />
+                      <div>
+                        <div className="font-medium leading-none">{inc.reporterName}</div>
+                        <div className="text-[0.65rem] text-muted-foreground mt-1">{inc.reporterRole}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-5 py-4 hidden lg:table-cell text-muted-foreground">
+                    {new Date(inc.createdAt).toLocaleDateString("pt-BR", { day: '2-digit', month: 'short', year: 'numeric' })}
+                  </td>
+                  <td className="px-5 py-4"><SeverityPill severity={inc.severity} /></td>
+                  <td className="px-5 py-4"><StatusBadge status={inc.status} /></td>
+                  <td className="px-5 py-4 text-muted-foreground group-hover:text-foreground transition-colors"><MoreVertical className="size-4" /></td>
+                </tr>
+              ))}
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="px-5 py-16 text-center text-muted-foreground">
+                    <div className="flex flex-col items-center justify-center gap-2">
+                      <Search className="size-8 text-muted-foreground/50" />
+                      <p>Nenhum incidente encontrado para esta busca.</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
+
+      <IncidentDrawer incident={selected} onClose={() => setSelected(null)} />
     </div>
   );
 }
 
-function Kpi({ label, value, tone, Icon }: { label: string; value: React.ReactNode; tone: "warning" | "success" | "destructive" | "primary"; Icon: React.ComponentType<{ className?: string }> }) {
-  const tones = {
-    primary: "text-primary bg-primary/10 ring-primary/25",
-    success: "text-success bg-success/10 ring-success/25",
-    warning: "text-warning bg-warning/10 ring-warning/25",
-    destructive: "text-destructive bg-destructive/10 ring-destructive/25",
-  } as const;
+function IncidentDrawer({ incident, onClose }: { incident: Incident | null; onClose: () => void }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-5 ring-soft">
-      <div className={`grid size-9 place-items-center rounded-lg ring-1 ring-inset ${tones[tone]}`}><Icon className="size-4" /></div>
-      <div className="mt-4 font-display text-2xl tabular-nums">{value}</div>
-      <div className="text-xs text-muted-foreground mt-1">{label}</div>
-    </div>
-  );
-}
+    <Sheet open={!!incident} onOpenChange={(o) => !o && onClose()}>
+      <SheetContent className="w-full sm:max-w-xl overflow-y-auto p-0 border-l border-border/60">
+        {incident && (
+          <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+            <SheetHeader className="px-6 py-6 border-b border-border/60 bg-secondary/10">
+              <div className="text-xs font-mono font-medium text-muted-foreground mb-1">{incident.id}</div>
+              <SheetTitle className="font-display text-2xl font-semibold">{incident.title}</SheetTitle>
+              <div className="flex flex-wrap items-center gap-2 pt-3">
+                <CategoryChip category={incident.category} />
+                <SeverityPill severity={incident.severity} />
+                <StatusBadge status={incident.status} />
+              </div>
+            </SheetHeader>
 
-function SeverityCard({ label, value, tone }: { label: string; value: number; tone: "info" | "warning" | "destructive" }) {
-  const tones = {
-    info: "text-info bg-info/10 ring-info/25",
-    warning: "text-warning bg-warning/10 ring-warning/25",
-    destructive: "text-destructive bg-destructive/10 ring-destructive/25",
-  } as const;
-  return (
-    <div className="rounded-2xl border border-border bg-card p-5 ring-soft">
-      <div className={`grid size-9 place-items-center rounded-lg ring-1 ring-inset ${tones[tone]}`}><ShieldAlert className="size-4" /></div>
-      <div className="mt-4 font-display text-2xl tabular-nums">{value}</div>
-      <div className="text-xs text-muted-foreground mt-1">{label}</div>
-    </div>
+            <div className="p-6 space-y-8">
+              <section>
+                <div className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/80 mb-3">Descrição do Reporte</div>
+                <p className="text-sm leading-relaxed text-muted-foreground">{incident.description}</p>
+              </section>
+
+              {incident.link && (
+                <section>
+                  <div className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/80 mb-3">Link Suspeito Anexado</div>
+                  <div className="relative group/link">
+                    <code className="block break-all rounded-xl border border-warning/20 bg-warning/5 p-3 text-sm font-mono text-warning-foreground">
+                      {incident.link}
+                    </code>
+                  </div>
+                </section>
+              )}
+
+              <section className="rounded-2xl border border-border/80 bg-card p-5 shadow-sm">
+                <div className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/80 mb-4">Informações do Denunciante</div>
+                <div className="flex items-center gap-4">
+                  <Avatar name={incident.reporterName} size={42} />
+                  <div>
+                    <div className="font-medium">{incident.reporterName}</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">{incident.reporterRole} · Reportado em {new Date(incident.createdAt).toLocaleDateString("pt-BR")}</div>
+                  </div>
+                </div>
+              </section>
+
+              <section>
+                <div className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/80 mb-3 flex items-center gap-1.5"><MessageSquare className="size-3.5" /> Comunicação Interna</div>
+                <Textarea className="resize-none bg-background focus-visible:ring-primary/30" rows={3} placeholder="Deixe uma anotação ou envie uma mensagem ao denunciante..." />
+              </section>
+
+              <div className="grid grid-cols-2 gap-3 pt-4 border-t border-border/60">
+                <Button variant="outline" className="gap-2 h-11" onClick={() => { toast.message("Reporte arquivado", { description: "Nenhuma ação foi necessária." }); onClose(); }}>
+                  <X className="size-4" /> Arquivar
+                </Button>
+                <Button className="gap-2 h-11 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5" onClick={() => { toast.success("Reporte validado!", { description: "150 pontos foram atribuídos ao usuário." }); onClose(); }}>
+                  <Check className="size-4" /> Validar Incidente
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+      </SheetContent>
+    </Sheet>
   );
 }

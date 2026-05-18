@@ -1,159 +1,147 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
 import { PageHeader } from "@/components/eliot/AppShell";
-import { StatusBadge, SeverityPill, CategoryChip } from "@/components/eliot/StatusBits";
-import { incidents } from "@/data/mock";
+import { adminKpis, monthlyVolume, typeDistribution } from "@/data/mock";
+import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import { AlertOctagon, CheckCircle2, Coins, XCircle, ShieldAlert, ShieldCheck, ListFilter } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Search, Filter, BarChart3, MoreVertical, MessageSquare, Check, X } from "lucide-react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { useState } from "react";
-import type { Incident } from "@/types/eliot";
-import { toast } from "sonner";
-import { Avatar } from "@/components/eliot/Sidebar";
-import { Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/app/admin")({
-  head: () => ({ meta: [{ title: "Painel administrativo — ELIOT" }] }),
-  component: AdminPage,
+  head: () => ({ meta: [{ title: "Painel Executivo — ELIOT" }] }),
+  component: AdminWrapper,
 });
 
-function AdminPage() {
-  const [selected, setSelected] = useState<Incident | null>(null);
-  const [query, setQuery] = useState("");
+const COLORS = ["oklch(0.82 0.14 210)", "oklch(0.73 0.17 150)", "oklch(0.78 0.16 290)", "oklch(0.82 0.15 80)", "oklch(0.66 0.21 25)"];
 
-  const filtered = incidents.filter((i) =>
-    [i.title, i.category, i.reporterName, i.id].join(" ").toLowerCase().includes(query.toLowerCase())
-  );
+function AdminWrapper() {
+  const location = useLocation();
+  // No TanStack Router, se o arquivo se chama "app.admin.tsx", ele atua como Layout (parent route) 
+  // para tudo que vem depois de /app/admin/*. Precisamos esconder o conteúdo do painel se estivermos na sub-rota.
+  const isIndex = location.pathname === "/app/admin" || location.pathname === "/app/admin/";
+
+  if (!isIndex) {
+    return <Outlet />; // Renderiza a página filha (Gestão Operacional) limpa
+  }
 
   return (
-    <div className="mx-auto max-w-7xl p-5 md:p-8 space-y-6">
+    <div className="mx-auto max-w-7xl p-4 sm:p-6 md:p-8 space-y-6 md:space-y-8 animate-in fade-in duration-500">
       <PageHeader
-        eyebrow="Administração"
-        title="Central de análise de incidentes"
-        description="Triagem, classificação e validação de notificações recebidas pela plataforma."
+        eyebrow="Painel Executivo"
+        title="Visão Geral Institucional"
+        description="Acompanhamento consolidado do volume, tipos e severidade de incidentes da universidade."
         actions={
-          <Button asChild variant="outline" className="gap-1.5"><Link to="/app/admin/analytics"><BarChart3 className="size-4" /> Ver analytics</Link></Button>
+          <Button asChild className="gap-2 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow">
+            <Link to="/app/admin/analytics"><ListFilter className="size-4" /> Gestão Operacional</Link>
+          </Button>
         }
       />
 
-      <div className="rounded-2xl border border-border bg-card ring-soft">
-        <div className="flex flex-wrap items-center gap-3 p-4 border-b border-border">
-          <div className="relative flex-1 min-w-60">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Buscar por título, ID, categoria, denunciante…" className="pl-9" />
-          </div>
-          <Button variant="outline" className="gap-1.5"><Filter className="size-4" /> Filtros</Button>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="text-xs uppercase tracking-wider text-muted-foreground bg-secondary/30">
-              <tr>
-                <th className="text-left px-4 py-3 font-medium">Incidente</th>
-                <th className="text-left px-4 py-3 font-medium hidden md:table-cell">Denunciante</th>
-                <th className="text-left px-4 py-3 font-medium hidden lg:table-cell">Data</th>
-                <th className="text-left px-4 py-3 font-medium">Severidade</th>
-                <th className="text-left px-4 py-3 font-medium">Status</th>
-                <th className="w-10"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((inc) => (
-                <tr
-                  key={inc.id}
-                  onClick={() => setSelected(inc)}
-                  className="border-t border-border hover:bg-secondary/30 cursor-pointer transition-colors"
-                >
-                  <td className="px-4 py-3">
-                    <div className="font-medium">{inc.title}</div>
-                    <div className="text-xs text-muted-foreground mt-0.5 flex items-center gap-2">
-                      <span>{inc.id}</span> · <CategoryChip category={inc.category} />
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 hidden md:table-cell">
-                    <div className="flex items-center gap-2">
-                      <Avatar name={inc.reporterName} size={26} />
-                      <div className="text-sm">
-                        <div className="leading-none">{inc.reporterName}</div>
-                        <div className="text-xs text-muted-foreground mt-1">{inc.reporterRole}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 hidden lg:table-cell text-muted-foreground">
-                    {new Date(inc.createdAt).toLocaleDateString("pt-BR")}
-                  </td>
-                  <td className="px-4 py-3"><SeverityPill severity={inc.severity} /></td>
-                  <td className="px-4 py-3"><StatusBadge status={inc.status} /></td>
-                  <td className="px-4 py-3 text-muted-foreground"><MoreVertical className="size-4" /></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      {/* Grid de KPIs principais */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Kpi label="Incidentes Pendentes" value={adminKpis.pending} tone="warning" Icon={AlertOctagon} />
+        <Kpi label="Incidentes Resolvidos" value={adminKpis.completed} tone="success" Icon={CheckCircle2} />
+        <Kpi label="Descartados/Falsos" value={adminKpis.rejected} tone="destructive" Icon={XCircle} />
+        <Kpi label="Pontos Distribuídos" value={adminKpis.pointsDistributed.toLocaleString("pt-BR")} tone="primary" Icon={Coins} />
       </div>
 
-      <IncidentDrawer incident={selected} onClose={() => setSelected(null)} />
+      {/* Gráficos */}
+      <div className="grid gap-4 lg:grid-cols-3">
+        <section className="lg:col-span-2 rounded-2xl border border-border/80 bg-card p-6 shadow-sm transition-all hover:shadow hover:border-border flex flex-col group">
+          <div className="mb-6">
+            <h3 className="font-semibold tracking-tight text-base sm:text-lg">Volume de Notificações</h3>
+            <p className="text-sm text-muted-foreground mt-1">Evolução dos chamados reportados nos últimos 12 meses.</p>
+          </div>
+          <div className="flex-1 min-h-[280px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={monthlyVolume} margin={{ left: -10, right: 0, top: 10, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="oklch(1 0 0 / 0.06)" vertical={false} />
+                <XAxis dataKey="month" stroke="oklch(0.7 0.02 250)" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis stroke="oklch(0.7 0.02 250)" fontSize={11} tickLine={false} axisLine={false} />
+                <Tooltip contentStyle={{ background: "oklch(0.22 0.028 258)", border: "1px solid oklch(1 0 0 / 0.1)", borderRadius: 10, fontSize: 12, boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }} cursor={{ fill: "oklch(1 0 0 / 0.04)" }} />
+                <Bar dataKey="value" radius={[6, 6, 0, 0]} fill="oklch(0.82 0.14 210)" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+
+        <section className="rounded-2xl border border-border/80 bg-card p-6 shadow-sm transition-all hover:shadow hover:border-border flex flex-col">
+          <div className="mb-2">
+            <h3 className="font-semibold tracking-tight text-base sm:text-lg">Distribuição por Categoria</h3>
+            <p className="text-sm text-muted-foreground mt-1">Tipos mais reportados.</p>
+          </div>
+          <div className="flex-1 min-h-[220px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={typeDistribution} dataKey="value" nameKey="name" innerRadius={60} outerRadius={85} paddingAngle={2} stroke="oklch(0.17 0.025 258)">
+                  {typeDistribution.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
+                </Pie>
+                <Tooltip contentStyle={{ background: "oklch(0.22 0.028 258)", border: "1px solid oklch(1 0 0 / 0.1)", borderRadius: 10, fontSize: 12, boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <ul className="mt-4 space-y-2">
+            {typeDistribution.map((t, i) => (
+              <li key={t.name} className="flex items-center justify-between text-xs font-medium px-1">
+                <span className="flex items-center gap-2.5"><span className="size-2.5 rounded-full" style={{ background: COLORS[i % COLORS.length] }} /> {t.name}</span>
+                <span className="tabular-nums text-muted-foreground">{t.value}%</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <SeverityCard label="Ameaças Leves" value={adminKpis.light} tone="info" />
+        <SeverityCard label="Ameaças Moderadas" value={adminKpis.moderate} tone="warning" />
+        <SeverityCard label="Ameaças Críticas" value={adminKpis.critical} tone="destructive" />
+        
+        <div className="rounded-2xl border border-border/80 bg-card p-5 shadow-sm transition-all hover:shadow hover:border-border flex flex-col justify-center">
+          <div className="grid size-11 place-items-center rounded-xl bg-success/10 text-success ring-1 ring-inset ring-success/25 mb-4"><ShieldCheck className="size-5" /></div>
+          <div className="font-display text-3xl font-bold tabular-nums tracking-tight">{adminKpis.resolutionRate}%</div>
+          <div className="text-sm text-muted-foreground mt-1 font-medium">Taxa de Resolução Global</div>
+        </div>
+      </div>
     </div>
   );
 }
 
-function IncidentDrawer({ incident, onClose }: { incident: Incident | null; onClose: () => void }) {
+function Kpi({ label, value, tone, Icon }: { label: string; value: React.ReactNode; tone: "warning" | "success" | "destructive" | "primary"; Icon: React.ComponentType<{ className?: string }> }) {
+  const styles = {
+    primary: { text: "text-primary", bg: "bg-primary/10", ring: "ring-primary/25", border: "border-primary/20" },
+    success: { text: "text-success", bg: "bg-success/10", ring: "ring-success/25", border: "border-success/20" },
+    warning: { text: "text-warning", bg: "bg-warning/10", ring: "ring-warning/25", border: "border-warning/20" },
+    destructive: { text: "text-destructive", bg: "bg-destructive/10", ring: "ring-destructive/25", border: "border-destructive/20" },
+  };
+  const s = styles[tone];
+  
   return (
-    <Sheet open={!!incident} onOpenChange={(o) => !o && onClose()}>
-      <SheetContent className="w-full sm:max-w-xl overflow-y-auto p-0">
-        {incident && (
-          <>
-            <SheetHeader className="px-6 pt-6">
-              <div className="text-xs text-muted-foreground">{incident.id}</div>
-              <SheetTitle className="font-display text-xl">{incident.title}</SheetTitle>
-              <div className="flex flex-wrap items-center gap-2 pt-1">
-                <CategoryChip category={incident.category} />
-                <SeverityPill severity={incident.severity} />
-                <StatusBadge status={incident.status} />
-              </div>
-            </SheetHeader>
+    <div className={`relative overflow-hidden rounded-2xl border bg-card p-5 transition-all hover:shadow-md hover:-translate-y-0.5 group border-border/80`}>
+      <div className={`absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-all duration-500 group-hover:rotate-12 group-hover:scale-110 ${s.text}`}>
+        <Icon className="size-24" />
+      </div>
+      <div className={`grid size-10 place-items-center rounded-xl ring-1 ring-inset shadow-sm transition-colors duration-300 group-hover:bg-opacity-20 ${s.bg} ${s.text} ${s.ring}`}>
+        <Icon className="size-5" />
+      </div>
+      <div className="mt-5 font-display text-3xl font-bold tracking-tight tabular-nums">{value}</div>
+      <div className="text-sm text-muted-foreground mt-1 font-medium">{label}</div>
+    </div>
+  );
+}
 
-            <div className="px-6 py-6 space-y-6">
-              <div>
-                <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Descrição</div>
-                <p className="text-sm leading-relaxed">{incident.description}</p>
-              </div>
+function SeverityCard({ label, value, tone }: { label: string; value: number; tone: "info" | "warning" | "destructive" }) {
+  const styles = {
+    info: { text: "text-info", bg: "bg-info/10", ring: "ring-info/25" },
+    warning: { text: "text-warning", bg: "bg-warning/10", ring: "ring-warning/25" },
+    destructive: { text: "text-destructive", bg: "bg-destructive/10", ring: "ring-destructive/25" },
+  };
+  const s = styles[tone];
 
-              {incident.link && (
-                <div>
-                  <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2">Link suspeito</div>
-                  <code className="block break-all rounded-lg border border-border bg-secondary/40 p-3 text-xs">{incident.link}</code>
-                </div>
-              )}
-
-              <div className="rounded-xl border border-border bg-secondary/30 p-4">
-                <div className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Denunciante</div>
-                <div className="flex items-center gap-3">
-                  <Avatar name={incident.reporterName} size={36} />
-                  <div>
-                    <div className="text-sm font-medium">{incident.reporterName}</div>
-                    <div className="text-xs text-muted-foreground">{incident.reporterRole} · reportado em {new Date(incident.createdAt).toLocaleDateString("pt-BR")}</div>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <div className="text-xs uppercase tracking-widest text-muted-foreground mb-2 flex items-center gap-1.5"><MessageSquare className="size-3.5" /> Mensagem ao denunciante</div>
-                <Textarea rows={3} placeholder="Envie uma mensagem para esclarecer ou agradecer o reporte." />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2 pt-2">
-                <Button variant="outline" className="gap-1.5" onClick={() => { toast.message("Reporte arquivado"); onClose(); }}>
-                  <X className="size-4" /> Arquivar
-                </Button>
-                <Button className="gap-1.5" onClick={() => { toast.success("Reporte validado", { description: "+150 pontos atribuídos ao denunciante." }); onClose(); }}>
-                  <Check className="size-4" /> Validar reporte
-                </Button>
-              </div>
-            </div>
-          </>
-        )}
-      </SheetContent>
-    </Sheet>
+  return (
+    <div className={`relative rounded-2xl border border-border/80 bg-card p-5 transition-all hover:shadow-md hover:-translate-y-0.5 group`}>
+      <div className={`grid size-10 place-items-center rounded-xl ring-1 ring-inset shadow-sm transition-colors duration-300 group-hover:bg-opacity-20 ${s.bg} ${s.text} ${s.ring}`}>
+        <ShieldAlert className="size-5" />
+      </div>
+      <div className="mt-4 font-display text-2xl font-bold tabular-nums tracking-tight">{value}</div>
+      <div className="text-sm text-muted-foreground mt-1 font-medium">{label}</div>
+    </div>
   );
 }
