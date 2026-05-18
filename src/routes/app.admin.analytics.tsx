@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Filter, MoreVertical, MessageSquare, Check, X, ArrowLeft } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import type { Incident } from "@/types/eliot";
 import { toast } from "sonner";
@@ -21,9 +24,43 @@ function AnalyticsOperationalPage() {
   const [selected, setSelected] = useState<Incident | null>(null);
   const [query, setQuery] = useState("");
 
-  const filtered = incidents.filter((i) =>
-    [i.title, i.category, i.reporterName, i.id].join(" ").toLowerCase().includes(query.toLowerCase())
-  );
+  const [filterStatus, setFilterStatus] = useState("Todos");
+  const [filterSeverity, setFilterSeverity] = useState("Todas");
+  const [filterCategory, setFilterCategory] = useState("Todas");
+  const [sortBy, setSortBy] = useState("Mais recentes");
+
+  const resetFilters = () => {
+    setFilterStatus("Todos");
+    setFilterSeverity("Todas");
+    setFilterCategory("Todas");
+    setSortBy("Mais recentes");
+  };
+
+  const activeFiltersCount =
+    (filterStatus !== "Todos" ? 1 : 0) +
+    (filterSeverity !== "Todas" ? 1 : 0) +
+    (filterCategory !== "Todas" ? 1 : 0);
+
+  const filtered = incidents
+    .filter((i) => {
+      const matchQuery = [i.title, i.category, i.reporterName, i.id]
+        .join(" ")
+        .toLowerCase()
+        .includes(query.toLowerCase());
+      const matchStatus = filterStatus === "Todos" || i.status === filterStatus;
+      const matchSeverity = filterSeverity === "Todas" || i.severity === filterSeverity;
+      const matchCategory = filterCategory === "Todas" || i.category === filterCategory;
+      return matchQuery && matchStatus && matchSeverity && matchCategory;
+    })
+    .sort((a, b) => {
+      if (sortBy === "Mais recentes") return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      if (sortBy === "Mais antigos") return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      if (sortBy === "Maior severidade") {
+        const sevOrder: Record<string, number> = { "Crítica": 3, "Alta": 2, "Média": 1, "Baixa": 0 };
+        return (sevOrder[b.severity] || 0) - (sevOrder[a.severity] || 0);
+      }
+      return 0;
+    });
 
   return (
     <div className="mx-auto max-w-7xl p-4 sm:p-6 md:p-8 space-y-6 md:space-y-8 animate-in fade-in duration-500">
@@ -42,9 +79,78 @@ function AnalyticsOperationalPage() {
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-5 border-b border-border bg-card/50">
           <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            <Input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Buscar por título, ID, categoria ou denunciante…" className="pl-10 h-10 bg-background shadow-sm" />
+            <Input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Buscar por título, ID, categoria ou denunciante…"
+              className="pl-10 h-10 bg-background shadow-sm"
+            />
           </div>
-          <Button variant="outline" className="gap-2 h-10 shrink-0"><Filter className="size-4" /> Filtros Avançados</Button>
+          
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className="gap-2 h-10 shrink-0 relative transition-colors">
+                <Filter className="size-4" /> Filtros Avançados
+                {activeFiltersCount > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[0.6rem] font-bold text-primary-foreground ring-2 ring-background">
+                    {activeFiltersCount}
+                  </span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-80 p-5 space-y-5 rounded-2xl border-border/80 shadow-xl bg-card">
+              <div className="flex items-center justify-between">
+                <h4 className="font-semibold text-sm tracking-tight">Filtros Avançados</h4>
+                {activeFiltersCount > 0 && (
+                  <Button variant="ghost" size="sm" onClick={resetFilters} className="h-auto p-0 px-2 py-1 text-xs text-muted-foreground hover:text-foreground">
+                    Limpar todos
+                  </Button>
+                )}
+              </div>
+
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Status do incidente</Label>
+                  <Select value={filterStatus} onValueChange={setFilterStatus}>
+                    <SelectTrigger className="h-9 bg-background"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {["Todos", "Pendente", "Em análise", "Validado", "Rejeitado", "Concluído"].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Severidade</Label>
+                  <Select value={filterSeverity} onValueChange={setFilterSeverity}>
+                    <SelectTrigger className="h-9 bg-background"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {["Todas", "Baixa", "Média", "Alta", "Crítica"].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-xs text-muted-foreground">Categoria</Label>
+                  <Select value={filterCategory} onValueChange={setFilterCategory}>
+                    <SelectTrigger className="h-9 bg-background"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {["Todas", "Phishing", "Malware", "Link suspeito", "Engenharia social", "Vazamento de dados", "Acesso indevido", "Anexo suspeito", "Outro"].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2 pt-2 border-t border-border/60">
+                  <Label className="text-xs text-muted-foreground">Ordenação</Label>
+                  <Select value={sortBy} onValueChange={setSortBy}>
+                    <SelectTrigger className="h-9 bg-background"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {["Mais recentes", "Mais antigos", "Maior severidade"].map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
 
         <div className="overflow-x-auto">
@@ -95,8 +201,13 @@ function AnalyticsOperationalPage() {
                 <tr>
                   <td colSpan={6} className="px-5 py-16 text-center text-muted-foreground">
                     <div className="flex flex-col items-center justify-center gap-2">
-                      <Search className="size-8 text-muted-foreground/50" />
-                      <p>Nenhum incidente encontrado para esta busca.</p>
+                      <Filter className="size-8 text-muted-foreground/50" />
+                      <p>Nenhum incidente encontrado para os filtros selecionados.</p>
+                      {activeFiltersCount > 0 && (
+                        <Button variant="link" onClick={resetFilters} className="mt-2 text-primary">
+                          Limpar filtros
+                        </Button>
+                      )}
                     </div>
                   </td>
                 </tr>
