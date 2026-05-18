@@ -11,8 +11,10 @@ export function AppShell() {
   const [openMenu, setOpenMenu] = useState(false);
   return (
     <div className="min-h-screen flex w-full bg-background">
+      {/* Sidebar para desktop */}
       <DesktopSidebar />
       <div className="flex-1 min-w-0 flex flex-col">
+        {/* Cabeçalho superior (Header) */}
         <header className="sticky top-0 z-30 h-16 flex items-center gap-3 border-b border-border bg-background/85 backdrop-blur px-4 md:px-6">
           <button
             onClick={() => setOpenMenu(true)}
@@ -51,11 +53,13 @@ export function AppShell() {
           </div>
         </header>
 
+        {/* Área principal de conteúdo das rotas */}
         <main className="flex-1 min-w-0 pb-24 md:pb-10">
           <Outlet />
         </main>
       </div>
 
+      {/* Navegação inferior para mobile */}
       <MobileBottomNav />
 
       {/* Mobile drawer */}

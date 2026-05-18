@@ -32,7 +32,7 @@ function Dashboard() {
         }
       />
 
-      {/* Level + KPIs */}
+      {/* Seção principal: Informações do usuário, XP (Nível) e KPIs */}
       <div className="grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2 rounded-2xl border border-border bg-card p-6 ring-soft">
           <div className="flex items-center gap-4">
@@ -70,7 +70,7 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Recent incidents + ranking */}
+      {/* Seção secundária: Lista de reportes recentes do usuário e ranking geral */}
       <div className="grid gap-4 lg:grid-cols-3">
         <Panel
           className="lg:col-span-2"
@@ -110,7 +110,7 @@ function Dashboard() {
         </Panel>
       </div>
 
-      {/* Badges + notifications + tips */}
+      {/* Seção terciária: Conquistas (Badges), sistema de notificações e dicas rápidas de segurança */}
       <div className="grid gap-4 lg:grid-cols-3">
         <Panel title="Badges recentes" action={<Link to="/app/badges" className="text-xs text-primary hover:underline">Ver todas</Link>}>
           <div className="grid grid-cols-2 gap-3">
