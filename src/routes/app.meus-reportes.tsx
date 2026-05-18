@@ -73,7 +73,7 @@ function MyReports() {
         </div>
         <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 flex flex-col justify-center transition-all hover:border-primary/40 hover:shadow-sm">
           <div className="flex items-center gap-2 text-primary mb-2">
-            <span className="text-[0.65rem] font-bold uppercase tracking-widest">XP Recebida</span>
+            <span className="text-[0.65rem] font-bold uppercase tracking-widest">Pontuação Recebida</span>
           </div>
           <div className="font-display text-3xl font-bold text-primary">+{pointsEarned}</div>
         </div>
@@ -136,7 +136,7 @@ function MyReports() {
                         {inc.points && (
                           <div className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-success/15 px-2.5 py-0.5 ring-1 ring-inset ring-success/30 mr-1">
                             <span className="text-[0.6rem] font-bold uppercase tracking-widest text-success/80">Recompensa</span>
-                            <span className="text-xs font-bold text-success">+{inc.points} XP</span>
+                            <span className="text-xs font-bold text-success">+{inc.points} pontos</span>
                           </div>
                         )}
                         <SeverityPill severity={inc.severity} />
@@ -160,7 +160,7 @@ function MyReports() {
                       {inc.points && (
                         <div className="sm:hidden inline-flex items-center gap-1.5 rounded-full bg-success/15 px-2.5 py-0.5 ring-1 ring-inset ring-success/30">
                           <span className="text-[0.6rem] font-bold uppercase tracking-widest text-success/80">Recompensa</span>
-                          <span className="text-[0.65rem] font-bold text-success">+{inc.points} XP</span>
+                          <span className="text-[0.65rem] font-bold text-success">+{inc.points} pontos</span>
                         </div>
                       )}
                     </div>
@@ -268,7 +268,7 @@ function IncidentDrawer({ incident, onClose, realisticDescriptions }: { incident
                     <div className="text-[0.65rem] font-bold uppercase tracking-widest text-success/80 mb-1">Recompensa Recebida</div>
                     <div className="text-sm font-medium text-success">Você ajudou a proteger a instituição.</div>
                   </div>
-                  <div className="font-display text-3xl font-bold text-success">+{incident.points} XP</div>
+                  <div className="font-display text-3xl font-bold text-success">+{incident.points} pontos</div>
                 </section>
               )}
 

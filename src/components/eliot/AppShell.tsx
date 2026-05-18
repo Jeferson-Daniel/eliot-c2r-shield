@@ -151,7 +151,7 @@ export function AppShell() {
                       </div>
                       <div className="flex-1">
                         <div className="text-sm font-bold leading-none mb-1">Reporte Validado</div>
-                        <div className="text-xs text-muted-foreground leading-relaxed">Sua ocorrência foi analisada pela equipe. +150 XP.</div>
+                        <div className="text-xs text-muted-foreground leading-relaxed">Sua ocorrência foi analisada pela equipe. +150 pontos.</div>
                         <div className="text-[0.65rem] font-semibold text-muted-foreground/60 mt-1.5">Há 10 min</div>
                       </div>
                     </li>
@@ -192,7 +192,7 @@ export function AppShell() {
                     <div className="text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground truncate mt-0.5">{currentUser.role}</div>
                   </div>
                   <div className="flex flex-col gap-0.5">
-                    <button onClick={() => { setUserOpen(false); navigate({ to: "/app/dashboard" }); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold rounded-lg hover:bg-secondary/60 transition-colors text-foreground">
+                    <button onClick={() => { setUserOpen(false); navigate({ to: "/app/configuracoes" }); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold rounded-lg hover:bg-secondary/60 transition-colors text-foreground">
                       <User className="size-4 text-muted-foreground" /> Minha Conta
                     </button>
                     <button onClick={() => { setUserOpen(false); navigate({ to: "/app/configuracoes" }); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold rounded-lg hover:bg-secondary/60 transition-colors text-foreground">
@@ -200,7 +200,7 @@ export function AppShell() {
                     </button>
                     <div className="h-px bg-border/40 my-1" />
                     <button onClick={() => { setUserOpen(false); navigate({ to: "/" }); }} className="w-full flex items-center gap-2.5 px-3 py-2 text-sm font-semibold rounded-lg hover:bg-destructive/10 text-destructive transition-colors">
-                      <LogOut className="size-4" /> Sair com Segurança
+                      <LogOut className="size-4" /> Sair
                     </button>
                   </div>
                 </div>

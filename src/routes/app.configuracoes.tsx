@@ -84,8 +84,8 @@ function Settings() {
               <div className="font-display text-xl font-bold text-foreground">{prog.current.name}</div>
             </div>
             <div className="text-left sm:text-right flex-1 sm:flex-none">
-              <div className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-primary/80 mb-1">Experiência</div>
-              <div className="font-display text-xl font-bold text-primary">+{currentUser.xp.toLocaleString("pt-BR")} XP</div>
+              <div className="text-[0.65rem] font-bold uppercase tracking-[0.2em] text-primary/80 mb-1">Pontuação</div>
+              <div className="font-display text-xl font-bold text-primary">+{currentUser.xp.toLocaleString("pt-BR")} pontos</div>
             </div>
           </div>
         </div>

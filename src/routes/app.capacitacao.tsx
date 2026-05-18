@@ -57,14 +57,14 @@ function CapacitacaoPage() {
           <div className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-[0.2em] mb-1.5">Nível Institucional</div>
           <div className="font-display text-2xl font-bold tracking-tight truncate text-foreground">{prog.current.name}</div>
           <div className="text-xs font-medium text-muted-foreground mt-2">
-            Faltam <span className="tabular-nums font-semibold">{prog.toNext.toLocaleString("pt-BR")}</span> XP pro próximo
+            Faltam <span className="tabular-nums font-semibold">{prog.toNext.toLocaleString("pt-BR")}</span> pontos pro próximo
           </div>
         </div>
 
         <div className="rounded-[1.5rem] border border-border/80 bg-card p-6 flex flex-col justify-center transition-all hover:shadow-md hover:-translate-y-0.5 hover:border-border relative overflow-hidden">
           <div className="relative z-10">
-            <div className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-[0.2em] mb-1.5">Experiência Total</div>
-            <div className="font-display text-2xl font-bold tracking-tight text-primary tabular-nums">{currentUser.xp.toLocaleString("pt-BR")} XP</div>
+            <div className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-[0.2em] mb-1.5">Pontuação Total</div>
+            <div className="font-display text-2xl font-bold tracking-tight text-primary tabular-nums">{currentUser.xp.toLocaleString("pt-BR")} pontos</div>
             <div className="text-xs font-medium text-muted-foreground mt-2">Acumulados nesta jornada</div>
           </div>
         </div>
@@ -112,7 +112,7 @@ function CapacitacaoPage() {
                   <div className="flex flex-col items-end gap-2 shrink-0">
                     <DifficultyBadge level={meta.difficulty} />
                     <div className="text-[0.65rem] font-bold uppercase tracking-wider text-muted-foreground/80">
-                      +{meta.xp} XP
+                      +{meta.xp} pontos
                     </div>
                   </div>
                 </div>

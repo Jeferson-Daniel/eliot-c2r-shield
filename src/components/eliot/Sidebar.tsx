@@ -13,7 +13,7 @@ export const NAV = [
   { to: "/app/meus-reportes", label: "Meus reportes", icon: ListChecks },
   { to: "/app/capacitacao", label: "Capacitação", icon: GraduationCap },
   { to: "/app/ranking", label: "Ranking", icon: Trophy },
-  { to: "/app/badges", label: "Badges", icon: Award },
+  { to: "/app/badges", label: "Emblemas", icon: Award },
 ] as const;
 
 export const ADMIN_NAV = [

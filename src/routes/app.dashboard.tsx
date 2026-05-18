@@ -87,8 +87,8 @@ function Dashboard() {
               
               <div className="max-w-md w-full mx-auto sm:mx-0">
                 <div className="flex items-center justify-between text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground mb-2">
-                  <span className="text-primary">{currentUser.xp.toLocaleString("pt-BR")} XP Acumulado</span>
-                  <span>Meta: {next ? toNext.toLocaleString("pt-BR") : 0} XP</span>
+                  <span className="text-primary">{currentUser.xp.toLocaleString("pt-BR")} Pontos Acumulados</span>
+                  <span>Meta: {next ? toNext.toLocaleString("pt-BR") : 0} pontos</span>
                 </div>
                 <div className="h-2.5 rounded-full bg-secondary/60 overflow-hidden ring-1 ring-inset ring-border/60 shadow-inner">
                   <div className="h-full rounded-full bg-gradient-to-r from-primary to-info relative transition-[width] duration-1000 ease-out" style={{ width: `${pct}%` }}>
@@ -236,7 +236,7 @@ function Dashboard() {
                     <Avatar name={u.name} size={36} />
                     <div className="flex-1 min-w-0">
                       <div className={cn("text-sm font-bold truncate transition-colors", isTop1 ? "text-amber-500 group-hover:text-amber-600" : "group-hover:text-primary")}>{u.name}</div>
-                      <div className="text-xs font-semibold text-muted-foreground truncate">{u.xp.toLocaleString()} XP</div>
+                      <div className="text-xs font-semibold text-muted-foreground truncate">{u.xp.toLocaleString()} pontos</div>
                     </div>
                   </li>
                 );

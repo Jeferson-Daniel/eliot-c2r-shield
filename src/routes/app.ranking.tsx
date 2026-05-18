@@ -75,7 +75,7 @@ function RankingPage() {
                 {u.xp.toLocaleString("pt-BR")}
               </div>
               
-              {/* Badges preview */}
+              {/* Emblemas preview */}
               <div className="mt-3 flex flex-wrap justify-center gap-1.5">
                 {u.badges.slice(0, 3).map((_, idx) => (
                   <div key={idx} className="grid size-5 place-items-center rounded-full bg-primary/10 text-primary ring-1 ring-inset ring-primary/20">
@@ -112,7 +112,7 @@ function RankingPage() {
               <th className="text-left px-5 sm:px-6 py-4 font-semibold w-16">Pos</th>
               <th className="text-left px-5 sm:px-6 py-4 font-semibold">Participante</th>
               <th className="text-left px-6 py-4 font-semibold hidden md:table-cell">Nível Institucional</th>
-              <th className="text-right px-5 sm:px-6 py-4 font-semibold">Experiência</th>
+              <th className="text-right px-5 sm:px-6 py-4 font-semibold">Pontuação</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border/60">
@@ -136,12 +136,12 @@ function RankingPage() {
                   <td className="px-6 py-4 hidden md:table-cell">
                     <div className="font-medium text-muted-foreground group-hover:text-foreground transition-colors">{prog.current.name}</div>
                     <div className="text-[0.65rem] text-muted-foreground/60 mt-0.5">
-                      Faltam {prog.toNext.toLocaleString("pt-BR")} XP para o próximo nível
+                      Faltam {prog.toNext.toLocaleString("pt-BR")} pontos para o próximo nível
                     </div>
                   </td>
                   <td className="px-5 sm:px-6 py-4 text-right">
                     <div className="font-display text-lg font-semibold tabular-nums tracking-tight">{u.xp.toLocaleString("pt-BR")}</div>
-                    <div className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest">XP</div>
+                    <div className="text-[0.65rem] font-bold text-muted-foreground uppercase tracking-widest">pontos</div>
                   </td>
                 </tr>
               );
