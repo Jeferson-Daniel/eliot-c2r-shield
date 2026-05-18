@@ -184,18 +184,17 @@ function Dashboard() {
               </div>
             </Panel>
 
-            {/* 7. Conquistas Conectadas */}
-            <Panel title="Inventário de Badges" icon={<Award className="size-4.5 text-primary" />} action={<Link to="/app/badges" className="text-[0.7rem] font-bold uppercase tracking-widest text-primary hover:underline">Ver acervo</Link>}>
+            {/* 7. Emblemas Conquistados */}
+            <Panel title="Inventário de Emblemas" icon={<Award className="size-4.5 text-primary" />} action={<Link to="/app/badges" className="text-[0.7rem] font-bold uppercase tracking-widest text-primary hover:underline">Ver acervo</Link>}>
               <div className="grid grid-cols-2 gap-4 mt-2">
                 {myBadges.map((b) => (
-                  <div key={b.slug} className="group relative flex flex-col items-center justify-center rounded-[1.25rem] border border-primary/20 bg-gradient-to-br from-primary/10 to-transparent p-5 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/20 hover:border-primary/50 overflow-hidden text-center">
-                    <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 blur-xl transition-opacity" />
-                    <div className="relative z-10">
-                      <div className="grid size-12 place-items-center rounded-2xl bg-background/80 text-primary ring-1 ring-inset ring-primary/30 mb-3 shadow-inner group-hover:bg-primary group-hover:text-primary-foreground transition-colors mx-auto">
+                  <div key={b.slug} className="group relative flex flex-col items-center justify-center rounded-[1.25rem] border border-border/80 bg-secondary/20 p-5 transition-all duration-300 hover:bg-card hover:border-primary/30 hover:shadow-sm overflow-hidden text-center">
+                    <div className="relative z-10 flex flex-col items-center">
+                      <div className="grid size-12 place-items-center rounded-2xl bg-background text-primary ring-1 ring-inset ring-border/50 mb-3 shadow-inner group-hover:bg-primary/10 group-hover:ring-primary/20 transition-colors mx-auto">
                         <Award className="size-6" />
                       </div>
                       <div className="text-xs font-bold tracking-tight">{b.name}</div>
-                      <div className="text-[0.6rem] font-bold uppercase tracking-widest text-primary/80 mt-1">Épico</div>
+                      <div className="text-[0.6rem] font-semibold text-muted-foreground/80 mt-1">Conquista Institucional</div>
                     </div>
                   </div>
                 ))}
