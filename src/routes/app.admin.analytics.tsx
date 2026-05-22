@@ -9,9 +9,10 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Incident } from "@/types/eliot";
 import { toast } from "sonner";
+import { api } from "@/services/api";
 import { Avatar } from "@/components/eliot/Sidebar";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -23,6 +24,29 @@ export const Route = createFileRoute("/app/admin/analytics")({
 function AnalyticsOperationalPage() {
   const [selected, setSelected] = useState<Incident | null>(null);
   const [query, setQuery] = useState("");
+  const [liveIncidents, setLiveIncidents] = useState<Incident[]>(incidents);
+
+  useEffect(() => {
+    api.getIncidentes()
+      .then(data => {
+        if (data && Array.isArray(data) && data.length > 0) {
+          const mapped: Incident[] = data.map((inc: any) => ({
+            id: `INC-${inc.id_incidente}`,
+            title: inc.titulo || "Sem Título",
+            description: inc.descricao || "",
+            category: inc.ameaca || "Outro",
+            severity: ["Malware", "Vazamento"].includes(inc.ameaca) ? "Crítica" : (inc.ameaca === "Phishing" ? "Alta" : "Média"),
+            status: inc.status_validacao || "Pendente",
+            reporterName: inc.usuario_incidente_id_usuario_relatorTousuario?.nome || `Usuário #${inc.id_usuario_relator}`,
+            reporterRole: inc.usuario_incidente_id_usuario_relatorTousuario?.cargo || "Membro Institucional",
+            createdAt: inc.data_criacao || new Date().toISOString(),
+            link: inc.link_suspeito || undefined,
+          }));
+          setLiveIncidents(mapped);
+        }
+      })
+      .catch(err => console.warn("Usando mock para analytics devido a falha na API:", err));
+  }, []);
 
   const [filterStatus, setFilterStatus] = useState("Todos");
   const [filterSeverity, setFilterSeverity] = useState("Todas");
@@ -41,7 +65,7 @@ function AnalyticsOperationalPage() {
     (filterSeverity !== "Todas" ? 1 : 0) +
     (filterCategory !== "Todas" ? 1 : 0);
 
-  const filtered = incidents
+  const filtered = liveIncidents
     .filter((i) => {
       const matchQuery = [i.title, i.category, i.reporterName, i.id]
         .join(" ")

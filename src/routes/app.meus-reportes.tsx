@@ -5,8 +5,9 @@ import { myIncidents } from "@/data/mock";
 import { Button } from "@/components/ui/button";
 import { Plus, Clock, Link as LinkIcon, Activity, CheckCircle2, ShieldAlert, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { Incident } from "@/types/eliot";
+import { api } from "@/services/api";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/app/meus-reportes")({
@@ -27,11 +28,35 @@ const FLOW_STEPS = ["Reportado", "Em análise", "Triagem", "Concluído"];
 
 function MyReports() {
   const [selected, setSelected] = useState<Incident | null>(null);
+  const [liveIncidents, setLiveIncidents] = useState<Incident[]>(myIncidents);
 
-  const totalSent = myIncidents.length;
-  const completed = myIncidents.filter(i => ["Validado", "Concluído"].includes(i.status)).length;
-  const inAnalysis = myIncidents.filter(i => i.status === "Em análise").length;
-  const pointsEarned = myIncidents.reduce((acc, i) => acc + (i.points || 0), 0);
+  useEffect(() => {
+    api.getIncidentes()
+      .then(data => {
+        if (data && Array.isArray(data) && data.length > 0) {
+          const mapped: Incident[] = data.map((inc: any) => ({
+            id: `INC-${inc.id_incidente}`,
+            title: inc.titulo || "Sem Título",
+            description: inc.descricao || "",
+            category: inc.ameaca || "Outro",
+            severity: ["Malware", "Vazamento"].includes(inc.ameaca) ? "Crítica" : (inc.ameaca === "Phishing" ? "Alta" : "Média"),
+            status: inc.status_validacao || "Pendente",
+            reporterName: inc.usuario_incidente_id_usuario_relatorTousuario?.nome || `Usuário #${inc.id_usuario_relator}`,
+            reporterRole: inc.usuario_incidente_id_usuario_relatorTousuario?.cargo || "Membro Institucional",
+            createdAt: inc.data_criacao || new Date().toISOString(),
+            link: inc.link_suspeito || undefined,
+            points: inc.pontos_atribuidos || 0,
+          }));
+          setLiveIncidents(mapped);
+        }
+      })
+      .catch(err => console.warn("Usando mock para meus-reportes devido a falha na API:", err));
+  }, []);
+
+  const totalSent = liveIncidents.length;
+  const completed = liveIncidents.filter(i => ["Validado", "Concluído"].includes(i.status)).length;
+  const inAnalysis = liveIncidents.filter(i => i.status === "Em análise").length;
+  const pointsEarned = liveIncidents.reduce((acc, i) => acc + (i.points || 0), 0);
 
   return (
     <div className="mx-auto max-w-5xl p-4 sm:p-6 md:p-8 space-y-8 animate-in fade-in duration-500">
@@ -80,7 +105,7 @@ function MyReports() {
       </div>
 
       {/* Lista de Incidentes ou Empty State */}
-      {myIncidents.length === 0 ? (
+      {liveIncidents.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-[1.5rem] border border-dashed border-border/60 bg-card/50 py-16 px-6 text-center animate-in fade-in">
           <div className="grid size-12 place-items-center rounded-full bg-secondary/80 text-muted-foreground mb-5">
             <ShieldAlert className="size-5" />
@@ -95,7 +120,7 @@ function MyReports() {
         </div>
       ) : (
         <div className="grid gap-5">
-          {myIncidents.map((inc) => {
+          {liveIncidents.map((inc) => {
             const desc = REALISTIC_DESCRIPTIONS[inc.title] || inc.description;
             
             // Lógica de estado visual
