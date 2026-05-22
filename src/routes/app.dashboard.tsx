@@ -108,7 +108,7 @@ function Dashboard() {
                 </div>
                 <div className="h-2.5 rounded-full bg-secondary/60 overflow-hidden ring-1 ring-inset ring-border/60 shadow-inner">
                   <div className="h-full rounded-full bg-gradient-to-r from-primary to-info relative transition-[width] duration-1000 ease-out" style={{ width: `${pct}%` }}>
-                     <div className="absolute inset-0 bg-white/20 animate-pulse" />
+                     <div className="absolute inset-0 bg-cyan-500/20 animate-pulse" />
                   </div>
                 </div>
               </div>
@@ -312,7 +312,7 @@ function Dashboard() {
         <SheetContent className="w-full sm:max-w-md overflow-y-auto p-0 border-l border-border/60">
           {selectedBadge && (
             <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-              <SheetHeader className="px-6 py-8 border-b border-border/60 bg-secondary/10 flex flex-col items-center text-center">
+              <SheetHeader className="px-6 py-8 border-b border-border/60 bg-[#07111f] flex flex-col items-center text-center">
                 <div className="grid size-16 place-items-center rounded-[1.25rem] bg-background text-primary ring-1 ring-inset ring-border/50 mb-4 shadow-sm">
                   <Award className="size-7" />
                 </div>
@@ -323,7 +323,7 @@ function Dashboard() {
               <div className="p-6 space-y-8">
                 <section>
                   <div className="text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground mb-3">Contexto da Conquista</div>
-                  <p className="text-sm leading-relaxed text-foreground/90">
+                  <p className="text-sm leading-relaxed text-slate-300">
                     Este reconhecimento é concedido por participação ativa na identificação de ocorrências, fortalecendo as barreiras de segurança e a cultura preventiva da nossa instituição.
                   </p>
                 </section>
@@ -331,7 +331,7 @@ function Dashboard() {
                 <section className="rounded-2xl border border-border/80 bg-card p-5 shadow-sm space-y-4">
                   <div>
                     <div className="text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground mb-1">Critério de Obtenção</div>
-                    <div className="text-sm font-medium text-foreground">{selectedBadge.description}</div>
+                    <div className="text-sm font-medium text-slate-100">{selectedBadge.description}</div>
                   </div>
                   <div className="h-px w-full bg-border/60" />
                   <div className="flex items-center justify-between">
@@ -341,7 +341,7 @@ function Dashboard() {
                     </div>
                     <div className="text-right">
                       <div className="text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground mb-1">Data</div>
-                      <div className="text-xs font-semibold text-foreground">Out 2023</div>
+                      <div className="text-xs font-semibold text-slate-100">Out 2023</div>
                     </div>
                   </div>
                 </section>

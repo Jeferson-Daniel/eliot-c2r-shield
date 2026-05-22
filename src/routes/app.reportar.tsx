@@ -205,7 +205,7 @@ function ReportPage() {
 
                 <div className="h-1.5 w-full rounded-full bg-primary/15 overflow-hidden shadow-inner">
                   <div className="h-full bg-primary rounded-full w-[82%] relative transition-all duration-1000">
-                    <div className="absolute inset-0 bg-white/30 animate-pulse duration-1000" />
+                    <div className="absolute inset-0 bg-primary/30 animate-pulse duration-1000" />
                   </div>
                 </div>
               </div>

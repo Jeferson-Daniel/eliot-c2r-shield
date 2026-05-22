@@ -29,19 +29,22 @@ function AnalyticsOperationalPage() {
   useEffect(() => {
     api.getIncidentes()
       .then(data => {
-        if (data && Array.isArray(data) && data.length > 0) {
-          const mapped: Incident[] = data.map((inc: any) => ({
-            id: `INC-${inc.id_incidente}`,
-            title: inc.titulo || "Sem Título",
-            description: inc.descricao || "",
-            category: inc.ameaca || "Outro",
-            severity: ["Malware", "Vazamento"].includes(inc.ameaca) ? "Crítica" : (inc.ameaca === "Phishing" ? "Alta" : "Média"),
-            status: inc.status_validacao || "Pendente",
-            reporterName: inc.usuario_incidente_id_usuario_relatorTousuario?.nome || `Usuário #${inc.id_usuario_relator}`,
-            reporterRole: inc.usuario_incidente_id_usuario_relatorTousuario?.cargo || "Membro Institucional",
-            createdAt: inc.data_criacao || new Date().toISOString(),
-            link: inc.link_suspeito || undefined,
-          }));
+        if (data && Array.isArray(data)) {
+          const mapped: Incident[] = data.map((inc: any) => {
+            const ameaca = inc?.ameaca ?? "Outro";
+            return {
+              id: `INC-${inc?.id_incidente ?? "000"}`,
+              title: inc?.titulo ?? "Sem Título",
+              description: inc?.descricao ?? "",
+              category: ameaca,
+              severity: ["Malware", "Vazamento"].includes(ameaca) ? "Crítica" : (ameaca === "Phishing" ? "Alta" : "Média"),
+              status: inc?.status_validacao ?? "Pendente",
+              reporterName: inc?.usuario_incidente_id_usuario_relatorTousuario?.nome ?? `Usuário #${inc?.id_usuario_relator ?? "Desconhecido"}`,
+              reporterRole: inc?.usuario_incidente_id_usuario_relatorTousuario?.cargo ?? "Membro Institucional",
+              createdAt: inc?.data_criacao ?? new Date().toISOString(),
+              link: inc?.link_suspeito ?? "",
+            };
+          });
           setLiveIncidents(mapped);
         }
       })
@@ -65,23 +68,28 @@ function AnalyticsOperationalPage() {
     (filterSeverity !== "Todas" ? 1 : 0) +
     (filterCategory !== "Todas" ? 1 : 0);
 
-  const filtered = liveIncidents
+  const filtered = (Array.isArray(liveIncidents) ? liveIncidents : [])
     .filter((i) => {
-      const matchQuery = [i.title, i.category, i.reporterName, i.id]
+      if (!i) return false;
+      const q = query ?? "";
+      const matchQuery = [i.title ?? "", i.category ?? "", i.reporterName ?? "", i.id ?? ""]
         .join(" ")
         .toLowerCase()
-        .includes(query.toLowerCase());
+        .includes(q.toLowerCase());
       const matchStatus = filterStatus === "Todos" || i.status === filterStatus;
       const matchSeverity = filterSeverity === "Todas" || i.severity === filterSeverity;
       const matchCategory = filterCategory === "Todas" || i.category === filterCategory;
       return matchQuery && matchStatus && matchSeverity && matchCategory;
     })
     .sort((a, b) => {
-      if (sortBy === "Mais recentes") return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      if (sortBy === "Mais antigos") return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      const dateA = new Date(a.createdAt ?? 0).getTime();
+      const dateB = new Date(b.createdAt ?? 0).getTime();
+      
+      if (sortBy === "Mais recentes") return dateB - dateA;
+      if (sortBy === "Mais antigos") return dateA - dateB;
       if (sortBy === "Maior severidade") {
         const sevOrder: Record<string, number> = { "Crítica": 3, "Alta": 2, "Média": 1, "Baixa": 0 };
-        return (sevOrder[b.severity] || 0) - (sevOrder[a.severity] || 0);
+        return (sevOrder[b.severity ?? "Baixa"] || 0) - (sevOrder[a.severity ?? "Baixa"] || 0);
       }
       return 0;
     });
@@ -206,10 +214,10 @@ function AnalyticsOperationalPage() {
                   </td>
                   <td className="px-5 py-4 hidden md:table-cell">
                     <div className="flex items-center gap-2.5">
-                      <Avatar name={inc.reporterName} size={28} />
+                      <Avatar name={inc.reporterName ?? "Desconhecido"} size={28} />
                       <div>
-                        <div className="font-medium leading-none">{inc.reporterName}</div>
-                        <div className="text-[0.65rem] text-muted-foreground mt-1">{inc.reporterRole}</div>
+                        <div className="font-medium leading-none">{inc.reporterName ?? "Usuário"}</div>
+                        <div className="text-[0.65rem] text-muted-foreground mt-1">{inc.reporterRole ?? "Membro Institucional"}</div>
                       </div>
                     </div>
                   </td>
@@ -252,8 +260,8 @@ function IncidentDrawer({ incident, onClose }: { incident: Incident | null; onCl
       <SheetContent className="w-full sm:max-w-xl overflow-y-auto p-0 border-l border-border/60">
         {incident && (
           <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-            <SheetHeader className="px-6 py-6 border-b border-border/60 bg-secondary/10">
-              <div className="text-xs font-mono font-medium text-muted-foreground mb-1">{incident.id}</div>
+            <SheetHeader className="px-6 py-6 border-b border-border/60 bg-[#07111f]">
+              <div className="text-xs font-mono font-medium text-cyan-200/60 mb-1">{incident.id}</div>
               <SheetTitle className="font-display text-2xl font-semibold">{incident.title}</SheetTitle>
               <div className="flex flex-wrap items-center gap-2 pt-3">
                 <CategoryChip category={incident.category} />
@@ -265,15 +273,15 @@ function IncidentDrawer({ incident, onClose }: { incident: Incident | null; onCl
             <div className="p-6 space-y-8">
               <section>
                 <div className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/80 mb-3">Descrição do Reporte</div>
-                <p className="text-sm leading-relaxed text-muted-foreground">{incident.description}</p>
+                <p className="text-sm leading-relaxed text-slate-300">{incident.description}</p>
               </section>
 
               {incident.link && (
                 <section>
                   <div className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/80 mb-3">Link Suspeito Anexado</div>
                   <div className="relative group/link">
-                    <code className="block break-all rounded-xl border border-warning/20 bg-warning/5 p-3 text-sm font-mono text-warning-foreground">
-                      {incident.link}
+                    <code className="block break-all break-words rounded-xl border border-cyan-500/20 bg-[#07111f] p-3 text-sm font-mono text-cyan-300 hover:text-cyan-200 transition-colors">
+                      <a href={incident.link} target="_blank" rel="noopener noreferrer">{incident.link}</a>
                     </code>
                   </div>
                 </section>
@@ -282,10 +290,10 @@ function IncidentDrawer({ incident, onClose }: { incident: Incident | null; onCl
               <section className="rounded-2xl border border-border/80 bg-card p-5 shadow-sm">
                 <div className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/80 mb-4">Informações do Denunciante</div>
                 <div className="flex items-center gap-4">
-                  <Avatar name={incident.reporterName} size={42} />
+                  <Avatar name={incident.reporterName ?? "Desconhecido"} size={42} />
                   <div>
-                    <div className="font-medium">{incident.reporterName}</div>
-                    <div className="text-xs text-muted-foreground mt-0.5">{incident.reporterRole} · Reportado em {new Date(incident.createdAt).toLocaleDateString("pt-BR")}</div>
+                    <div className="font-medium">{incident.reporterName ?? "Usuário"}</div>
+                    <div className="text-xs text-slate-300 mt-0.5">{incident.reporterRole ?? "Membro"} · Reportado em {new Date(incident.createdAt ?? 0).toLocaleDateString("pt-BR")}</div>
                   </div>
                 </div>
               </section>

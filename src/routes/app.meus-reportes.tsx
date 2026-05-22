@@ -33,30 +33,34 @@ function MyReports() {
   useEffect(() => {
     api.getIncidentes()
       .then(data => {
-        if (data && Array.isArray(data) && data.length > 0) {
-          const mapped: Incident[] = data.map((inc: any) => ({
-            id: `INC-${inc.id_incidente}`,
-            title: inc.titulo || "Sem Título",
-            description: inc.descricao || "",
-            category: inc.ameaca || "Outro",
-            severity: ["Malware", "Vazamento"].includes(inc.ameaca) ? "Crítica" : (inc.ameaca === "Phishing" ? "Alta" : "Média"),
-            status: inc.status_validacao || "Pendente",
-            reporterName: inc.usuario_incidente_id_usuario_relatorTousuario?.nome || `Usuário #${inc.id_usuario_relator}`,
-            reporterRole: inc.usuario_incidente_id_usuario_relatorTousuario?.cargo || "Membro Institucional",
-            createdAt: inc.data_criacao || new Date().toISOString(),
-            link: inc.link_suspeito || undefined,
-            points: inc.pontos_atribuidos || 0,
-          }));
+        if (data && Array.isArray(data)) {
+          const mapped: Incident[] = data.map((inc: any) => {
+            const ameaca = inc?.ameaca ?? "Outro";
+            return {
+              id: `INC-${inc?.id_incidente ?? "000"}`,
+              title: inc?.titulo ?? "Sem Título",
+              description: inc?.descricao ?? "",
+              category: ameaca,
+              severity: ["Malware", "Vazamento"].includes(ameaca) ? "Crítica" : (ameaca === "Phishing" ? "Alta" : "Média"),
+              status: inc?.status_validacao ?? "Pendente",
+              reporterName: inc?.usuario_incidente_id_usuario_relatorTousuario?.nome ?? `Usuário #${inc?.id_usuario_relator ?? "Desconhecido"}`,
+              reporterRole: inc?.usuario_incidente_id_usuario_relatorTousuario?.cargo ?? "Membro Institucional",
+              createdAt: inc?.data_criacao ?? new Date().toISOString(),
+              link: inc?.link_suspeito ?? "",
+              points: inc?.pontos_atribuidos ?? 0,
+            };
+          });
           setLiveIncidents(mapped);
         }
       })
       .catch(err => console.warn("Usando mock para meus-reportes devido a falha na API:", err));
   }, []);
 
-  const totalSent = liveIncidents.length;
-  const completed = liveIncidents.filter(i => ["Validado", "Concluído"].includes(i.status)).length;
-  const inAnalysis = liveIncidents.filter(i => i.status === "Em análise").length;
-  const pointsEarned = liveIncidents.reduce((acc, i) => acc + (i.points || 0), 0);
+  const safeIncidents = Array.isArray(liveIncidents) ? liveIncidents : [];
+  const totalSent = safeIncidents.length;
+  const completed = safeIncidents.filter(i => ["Validado", "Concluído"].includes(i?.status ?? "")).length;
+  const inAnalysis = safeIncidents.filter(i => (i?.status ?? "") === "Em análise").length;
+  const pointsEarned = safeIncidents.reduce((acc, i) => acc + (i?.points ?? 0), 0);
 
   return (
     <div className="mx-auto max-w-5xl p-4 sm:p-6 md:p-8 space-y-8 animate-in fade-in duration-500">
@@ -105,7 +109,7 @@ function MyReports() {
       </div>
 
       {/* Lista de Incidentes ou Empty State */}
-      {liveIncidents.length === 0 ? (
+      {safeIncidents.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-[1.5rem] border border-dashed border-border/60 bg-card/50 py-16 px-6 text-center animate-in fade-in">
           <div className="grid size-12 place-items-center rounded-full bg-secondary/80 text-muted-foreground mb-5">
             <ShieldAlert className="size-5" />
@@ -120,8 +124,10 @@ function MyReports() {
         </div>
       ) : (
         <div className="grid gap-5">
-          {liveIncidents.map((inc) => {
-            const desc = REALISTIC_DESCRIPTIONS[inc.title] || inc.description;
+          {safeIncidents.map((inc) => {
+            if (!inc) return null;
+            const titleSafe = inc.title ?? "";
+            const desc = REALISTIC_DESCRIPTIONS[titleSafe] || (inc.description ?? "");
             
             // Lógica de estado visual
             const isPending = inc.status === "Pendente";
@@ -146,33 +152,33 @@ function MyReports() {
                   
                   {/* Meta-info Lateral */}
                   <div className="flex sm:flex-col items-center sm:items-start gap-3 sm:w-32 shrink-0">
-                    <div className="text-[0.65rem] font-mono font-bold text-muted-foreground/80 bg-secondary/60 px-2.5 py-1 rounded-md">{inc.id}</div>
+                    <div className="text-[0.65rem] font-mono font-bold text-muted-foreground/80 bg-secondary/60 px-2.5 py-1 rounded-md">{inc.id ?? "INC-0"}</div>
                     <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                       <Clock className="size-3.5" /> 
-                      {new Date(inc.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}
+                      {new Date(inc.createdAt ?? 0).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}
                     </div>
                   </div>
 
                   {/* Corpo do Reporte */}
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
-                      <h3 className="font-display text-lg font-semibold tracking-tight leading-snug group-hover:text-primary transition-colors">{inc.title}</h3>
+                      <h3 className="font-display text-lg font-semibold tracking-tight leading-snug group-hover:text-primary transition-colors">{inc.title ?? "Sem Título"}</h3>
                       <div className="flex flex-wrap items-center gap-2 shrink-0">
-                        {inc.points && (
+                        {(inc.points ?? 0) > 0 && (
                           <div className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-success/15 px-2.5 py-0.5 ring-1 ring-inset ring-success/30 mr-1">
                             <span className="text-[0.6rem] font-bold uppercase tracking-widest text-success/80">Recompensa</span>
                             <span className="text-xs font-bold text-success">+{inc.points} pontos</span>
                           </div>
                         )}
-                        <SeverityPill severity={inc.severity} />
-                        <StatusBadge status={inc.status} />
+                        <SeverityPill severity={inc.severity ?? "Baixa"} />
+                        <StatusBadge status={inc.status ?? "Pendente"} />
                       </div>
                     </div>
 
                     <p className="text-sm text-foreground/80 leading-relaxed mb-5">{desc}</p>
                     
                     <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                      <CategoryChip category={inc.category} />
+                      <CategoryChip category={inc.category ?? "Outro"} />
                       {inc.link && (
                         <span 
                           className="inline-flex items-center gap-1.5 rounded-full bg-primary/5 px-3 py-1 max-w-[200px] sm:max-w-xs ring-1 ring-primary/15 hover:ring-primary/40 hover:bg-primary/10 text-primary transition-colors"
@@ -182,7 +188,7 @@ function MyReports() {
                           <span className="truncate font-medium">{inc.link}</span>
                         </span>
                       )}
-                      {inc.points && (
+                      {(inc.points ?? 0) > 0 && (
                         <div className="sm:hidden inline-flex items-center gap-1.5 rounded-full bg-success/15 px-2.5 py-0.5 ring-1 ring-inset ring-success/30">
                           <span className="text-[0.6rem] font-bold uppercase tracking-widest text-success/80">Recompensa</span>
                           <span className="text-[0.65rem] font-bold text-success">+{inc.points} pontos</span>
@@ -234,7 +240,7 @@ function IncidentFlow({ status }: { status: string }) {
             <div className={cn("h-1 w-full rounded-full transition-colors relative overflow-hidden", colorClass)}>
               {/* Micro-animação: Pulse muito suave apenas na barra atual indicando atividade */}
               {isCurrent && !isRejected && (
-                <div className="absolute inset-0 bg-white/40 animate-pulse" />
+                <div className="absolute inset-0 bg-primary/40 animate-pulse" />
               )}
             </div>
             <span className={cn("text-[0.6rem] uppercase tracking-[0.1em] text-center hidden sm:block transition-colors", textClass)}>
@@ -253,8 +259,8 @@ function IncidentDrawer({ incident, onClose, realisticDescriptions }: { incident
       <SheetContent className="w-full sm:max-w-xl overflow-y-auto p-0 border-l border-border/60">
         {incident && (
           <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-            <SheetHeader className="px-6 py-6 border-b border-border/60 bg-secondary/10">
-              <div className="text-xs font-mono font-medium text-muted-foreground mb-1">{incident.id}</div>
+            <SheetHeader className="px-6 py-6 border-b border-border/60 bg-[#07111f]">
+              <div className="text-xs font-mono font-medium text-cyan-200/60 mb-1">{incident.id}</div>
               <SheetTitle className="font-display text-2xl font-semibold">{incident.title}</SheetTitle>
               <div className="flex flex-wrap items-center gap-2 pt-3">
                 <CategoryChip category={incident.category} />
@@ -266,7 +272,7 @@ function IncidentDrawer({ incident, onClose, realisticDescriptions }: { incident
             <div className="p-6 space-y-8">
               <section>
                 <div className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/80 mb-3">Descrição Registrada</div>
-                <p className="text-sm leading-relaxed text-foreground/90">
+                <p className="text-sm leading-relaxed text-slate-300">
                   {realisticDescriptions[incident.title] || incident.description}
                 </p>
               </section>
@@ -275,8 +281,8 @@ function IncidentDrawer({ incident, onClose, realisticDescriptions }: { incident
                 <section>
                   <div className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/80 mb-3">Link/Evidência Anexada</div>
                   <div className="relative">
-                    <code className="block break-all rounded-xl border border-primary/15 bg-primary/5 p-4 text-sm font-mono text-primary font-medium ring-1 ring-inset ring-primary/5">
-                      {incident.link}
+                    <code className="block break-all break-words rounded-xl border border-cyan-500/20 bg-[#07111f] p-4 text-sm font-mono text-cyan-300 font-medium hover:text-cyan-200 transition-colors">
+                      <a href={incident.link} target="_blank" rel="noopener noreferrer">{incident.link}</a>
                     </code>
                   </div>
                 </section>
@@ -300,7 +306,7 @@ function IncidentDrawer({ incident, onClose, realisticDescriptions }: { incident
               {(incident.status === "Validado" || incident.status === "Concluído" || incident.status === "Rejeitado") && (
                 <section>
                   <div className="text-[0.65rem] font-bold uppercase tracking-widest text-primary/80 mb-3 flex items-center gap-1.5"><MessageSquare className="size-3.5" /> Retorno da Equipe de Análise</div>
-                  <div className="rounded-xl bg-secondary/40 border border-border p-4 text-sm text-foreground/80 italic">
+                  <div className="rounded-xl bg-secondary/40 border border-border p-4 text-sm text-slate-300 italic">
                     {incident.status === "Rejeitado" 
                       ? "Este reporte foi classificado como inconclusivo ou comportamento esperado do sistema. Nenhuma ação extra foi necessária, mas agradecemos a vigilância contínua."
                       : "Ameaça confirmada e contida pela equipe de segurança. O remetente foi bloqueado no gateway de e-mail institucional e usuários afetados foram notificados."}
