@@ -46,6 +46,21 @@ export const api = {
     }
   },
 
+  async createIncidente(payload: { titulo: string; descricao: string; ameaca: string; link_suspeito?: string; id_usuario_relator: number }) {
+    try {
+      const response = await fetch(`${API_URL}/incidentes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!response.ok) throw new Error('Falha ao criar incidente');
+      return await response.json();
+    } catch (error) {
+      console.error('Erro na API createIncidente:', error);
+      throw error;
+    }
+  },
+
   async getUsuarios() {
     try {
       const response = await fetch(`${API_URL}/usuarios`);

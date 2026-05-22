@@ -9,3 +9,7 @@ export const getIncidenteById = async (id: number) => {
     where: { id_incidente: id },
   });
 };
+
+export const createIncidente = async (data: any) => {
+  return await prisma.incidente.create({ data });
+};
