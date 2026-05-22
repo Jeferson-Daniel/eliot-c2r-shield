@@ -1,12 +1,62 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  engineType = "binary"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model anexo_incidente {
+  id_anexo                Int       @id @default(autoincrement())
+  id_incidente            Int
+  caminho_arquivo_storage String    @db.VarChar(255)
+  hash_md5_arquivo        String    @db.VarChar(32)
+  data_upload             DateTime? @default(now()) @db.Timestamp(6)
+  incidente               incidente @relation(fields: [id_incidente], references: [id_incidente], onDelete: Cascade, onUpdate: NoAction, map: "fk_anexo_incidente")
+}
+
+model incidente {
+  id_incidente                                    Int               @id @default(autoincrement())
+  id_usuario_relator                              Int
+  id_usuario_validador                            Int?
+  titulo                                          String            @db.VarChar(100)
+  descricao                                       String
+  link_suspeito                                   String?           @db.VarChar(255)
+  status_validacao                                String?           @default("Pendente") @db.VarChar(20)
+  ameaca                                          String?           @db.VarChar(20)
+  pontos_atribuidos                               Int?              @default(0)
+  data_criacao                                    DateTime?         @default(now()) @db.Timestamp(6)
+  anexo_incidente                                 anexo_incidente[]
+  usuario_incidente_id_usuario_relatorTousuario   usuario           @relation("incidente_id_usuario_relatorTousuario", fields: [id_usuario_relator], references: [id_usuario], onUpdate: NoAction, map: "fk_incidente_relator")
+  usuario_incidente_id_usuario_validadorTousuario usuario?          @relation("incidente_id_usuario_validadorTousuario", fields: [id_usuario_validador], references: [id_usuario], onUpdate: NoAction, map: "fk_incidente_validador")
+}
+
+model insignia {
+  id_insignia          Int                @id @default(autoincrement())
+  titulo_insignia      String             @unique @db.VarChar(50)
+  caminho_icone        String             @db.VarChar(255)
+  pontuacao_necessaria Int
+  usuario_insignia     usuario_insignia[]
+}
+
+model usuario {
+  id_usuario                                        Int                @id @default(autoincrement())
+  matricula                                         String             @unique @db.VarChar(20)
+  nome                                              String             @db.VarChar(100)
+  cargo                                             String             @db.VarChar(50)
+  pontuacao_total                                   Int?               @default(0)
+  data_cadastro                                     DateTime?          @default(now()) @db.Timestamp(6)
+  incidente_incidente_id_usuario_relatorTousuario   incidente[]        @relation("incidente_id_usuario_relatorTousuario")
+  incidente_incidente_id_usuario_validadorTousuario incidente[]        @relation("incidente_id_usuario_validadorTousuario")
+  usuario_insignia                                  usuario_insignia[]
+}
+
+model usuario_insignia {
+  id_usuario  Int
+  id_insignia Int
+  insignia    insignia @relation(fields: [id_insignia], references: [id_insignia], onDelete: Cascade, onUpdate: NoAction, map: "fk_ui_insignia")
+  usuario     usuario  @relation(fields: [id_usuario], references: [id_usuario], onDelete: Cascade, onUpdate: NoAction, map: "fk_ui_usuario")
+
+  @@id([id_usuario, id_insignia])
 }
