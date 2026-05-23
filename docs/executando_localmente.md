@@ -1,61 +1,83 @@
 # Executando Localmente (Guia de Setup)
 
-Este guia apresenta o passo a passo completo para que revisores e avaliadores do SBSeg consigam rodar o projeto **ELIOT C2R SHIELD** localmente de maneira reproduzível e sem atritos.
+Este guia apresenta o passo a passo completo para que revisores e avaliadores do SBSeg consigam rodar o projeto **ELIOT C2R SHIELD** localmente de maneira reproduzÃ­vel e sem atritos.
 
 ---
 
 ## 1. Requisitos do Sistema
 
-Para executar a aplicação em ambiente local, certifique-se de ter instalado:
-- **Node.js:** Versão 20 ou superior (versão recomendada v24.x).
+Para executar a aplicaÃ§Ã£o em ambiente local, certifique-se de ter instalado:
+- **Node.js:** VersÃ£o 20 ou superior (versÃ£o recomendada v24.x).
 - **Gerenciador de Pacotes:** `npm` (embutido no Node.js).
-- **PostgreSQL:** Servidor local rodando na porta `5432` (versão 14+).
+- **PostgreSQL:** Servidor local rodando na porta `5432` (versÃ£o 14+).
 
 ---
 
 ## 2. Preparação e Banco de Dados
 
-1. Certifique-se de que o serviço do PostgreSQL está rodando em sua máquina.
-2. Crie um banco de dados em branco chamado `eliot_db`:
+O projeto oferece dois modos de inicialização do banco de dados, permitindo flexibilidade para desenvolvedores e facilidade de reprodução para os avaliadores.
+
+### Modo Desenvolvimento
+Se você já possui um PostgreSQL instalado na sua máquina ou deseja conectar a um banco remoto:
+1. Certifique-se de que o serviço do PostgreSQL está rodando ou acessível.
+2. Crie um banco de dados vazio chamado `eliot_db`:
    ```sql
    CREATE DATABASE eliot_db;
    ```
-*(Alternativamente, você pode usar um usuário existente, mas garanta acesso de persistência ao DB).*
+3. Configure a `DATABASE_URL` no arquivo `backend/.env` manualmente para apontar para o seu banco.
+
+### Modo Avaliação SBSeg (Recomendado via Docker)
+Este é o modo ideal para uma avaliação rápida, isolada e sem atritos, utilizando o `docker-compose` preparado na raiz do projeto. Subirá um container PostgreSQL isolado na porta `5432` com credenciais padrão.
+
+1. Na raiz do projeto, suba o container do banco de dados em background:
+   ```bash
+   docker compose up -d
+   ```
+*(Este comando lerá o arquivo `docker-compose.yml` e deixará o banco de dados acessível na porta 5432).*
+
+Para desligar o banco de dados após a avaliação:
+```bash
+docker compose down
+```
+Se precisar limpar o banco local completamente e começar do zero (destrói o volume de dados):
+```bash
+docker compose down -v
+```
 
 ---
 
-## 3. Configuração do Backend
+## 3. ConfiguraÃ§Ã£o do Backend
 
-O backend é a camada de API e conexão com o banco de dados. Navegue até o diretório correspondente e configure as credenciais.
+O backend Ã© a camada de API e conexÃ£o com o banco de dados. Navegue atÃ© o diretÃ³rio correspondente e configure as credenciais.
 
-1. Acesse o diretório do backend:
+1. Acesse o diretÃ³rio do backend:
    ```bash
    cd backend
    ```
-2. Instale as dependências:
+2. Instale as dependÃªncias:
    ```bash
    npm install
    ```
-3. Configure as variáveis de ambiente:
+3. Configure as variÃ¡veis de ambiente:
    - Duplique o arquivo `.env.example` e renomeie para `.env`:
      ```bash
      cp .env.example .env
      ```
-   - Edite o arquivo `.env` para garantir que a `DATABASE_URL` aponta para o seu usuário e senha do PostgreSQL configurado no passo anterior.
+   - Edite o arquivo `.env` para garantir que a `DATABASE_URL` aponta para o seu usuÃ¡rio e senha do PostgreSQL configurado no passo anterior.
      Exemplo:
      ```env
      DATABASE_URL="postgresql://postgres:suasenha123@localhost:5432/eliot_db"
      PORT=3001
      ```
 
-### Migrações e Dados Iniciais (Seed)
+### MigraÃ§Ãµes e Dados Iniciais (Seed)
 Para sincronizar as tabelas do Prisma com o seu banco de dados vazio e popular dados realistas institucionais (Mock Rico), execute:
 
 1. Gere o client do Prisma:
    ```bash
    npx prisma generate
    ```
-2. Rode as migrações no banco:
+2. Rode as migraÃ§Ãµes no banco:
    ```bash
    npx prisma db push
    ```
@@ -63,31 +85,31 @@ Para sincronizar as tabelas do Prisma com o seu banco de dados vazio e popular d
    ```bash
    npm run seed
    ```
-*(Você deverá ver a mensagem "Seed rico e realista concluído com sucesso!").*
+*(VocÃª deverÃ¡ ver a mensagem "Seed rico e realista concluÃ­do com sucesso!").*
 
 ### Inicializando o Backend
 Com o banco configurado, suba o servidor backend (API):
 ```bash
 npm start
 ```
-A API RESTful estará rodando em `http://localhost:3001`.
+A API RESTful estarÃ¡ rodando em `http://localhost:3001`.
 
 ---
 
-## 4. Configuração do Frontend
+## 4. ConfiguraÃ§Ã£o do Frontend
 
-O frontend consome a API do backend. É recomendável abrir uma **nova janela de terminal** para mantê-los rodando simultaneamente.
+O frontend consome a API do backend. Ã‰ recomendÃ¡vel abrir uma **nova janela de terminal** para mantÃª-los rodando simultaneamente.
 
-1. Na raiz do projeto, instale as dependências:
+1. Na raiz do projeto, instale as dependÃªncias:
    ```bash
    npm install
    ```
-2. Configure as variáveis de ambiente:
+2. Configure as variÃ¡veis de ambiente:
    - Copie o arquivo de exemplo:
      ```bash
      cp .env.example .env
      ```
-   - O `.env` na raiz informará o frontend onde a API está:
+   - O `.env` na raiz informarÃ¡ o frontend onde a API estÃ¡:
      ```env
      VITE_API_URL=http://localhost:3001/api
      ```
@@ -96,7 +118,7 @@ O frontend consome a API do backend. É recomendável abrir uma **nova janela de
    npm run dev
    ```
 
-A aplicação subirá através do Vite.
+A aplicaÃ§Ã£o subirÃ¡ atravÃ©s do Vite.
 
 ---
 
@@ -104,29 +126,29 @@ A aplicação subirá através do Vite.
 
 Com os servidores rodando, acesse no navegador:
 
-- **Frontend (Interface do Usuário):** `http://localhost:8080` (ou a porta mostrada no terminal do Vite, como `:5173`).
-- **Backend (Verificação Base):** `http://localhost:3001/api/incidentes` (deve retornar um JSON com a listagem gerada pelo Seed).
+- **Frontend (Interface do UsuÃ¡rio):** `http://localhost:8080` (ou a porta mostrada no terminal do Vite, como `:5173`).
+- **Backend (VerificaÃ§Ã£o Base):** `http://localhost:3001/api/incidentes` (deve retornar um JSON com a listagem gerada pelo Seed).
 
 ---
 
-## 6. Troubleshooting (Solução de Problemas)
+## 6. Troubleshooting (SoluÃ§Ã£o de Problemas)
 
 - **`PrismaClientInitializationError` / "ECONNREFUSED":**
-  - Causa: O backend não conseguiu conectar ao PostgreSQL.
-  - Solução: Verifique se o seu PostgreSQL local está rodando, se a porta 5432 está correta e se os dados (user/senha) definidos na `DATABASE_URL` do `backend/.env` estão corretos.
+  - Causa: O backend nÃ£o conseguiu conectar ao PostgreSQL.
+  - SoluÃ§Ã£o: Verifique se o seu PostgreSQL local estÃ¡ rodando, se a porta 5432 estÃ¡ correta e se os dados (user/senha) definidos na `DATABASE_URL` do `backend/.env` estÃ£o corretos.
   
-- **Frontend exibe Toast "Erro ao registrar a ocorrência":**
-  - Causa: A comunicação entre Frontend e Backend falhou no momento de um POST.
-  - Solução: Confira se o `.env` na raiz do projeto está apontando para `http://localhost:3001/api` e se a janela de terminal do backend (`npm start`) ainda está rodando sem erros.
+- **Frontend exibe Toast "Erro ao registrar a ocorrÃªncia":**
+  - Causa: A comunicaÃ§Ã£o entre Frontend e Backend falhou no momento de um POST.
+  - SoluÃ§Ã£o: Confira se o `.env` na raiz do projeto estÃ¡ apontando para `http://localhost:3001/api` e se a janela de terminal do backend (`npm start`) ainda estÃ¡ rodando sem erros.
   
 - **Tabelas faltando ou erros de schema:**
-  - Solução: No terminal do `backend/`, pare a execução, rode `npx prisma db push` e reinicie com `npm start`.
+  - SoluÃ§Ã£o: No terminal do `backend/`, pare a execuÃ§Ã£o, rode `npx prisma db push` e reinicie com `npm start`.
 
 ---
 
 ## 7. Testes Automatizados (Selo F e Selo S)
 
-O backend possui uma suite de testes m�nimos implementada com Vitest e Supertest para garantir a integridade dos endpoints (Health Check, Incidentes, Dashboard e Ranking).
+O backend possui uma suite de testes mínimos implementada com Vitest e Supertest para garantir a integridade dos endpoints (Health Check, Incidentes, Dashboard e Ranking).
 
 Para executar os testes automatizados, certifique-se de que o banco de dados PostgreSQL esteja rodando com a seed aplicada e execute os seguintes comandos:
 
@@ -135,4 +157,4 @@ cd backend
 npm run build
 npm test
 ``n
-Voc� dever� ver o relat�rio do Vitest indicando que todos os testes de API passaram com sucesso.
+Você deverá ver o relatório do Vitest indicando que todos os testes de API passaram com sucesso.

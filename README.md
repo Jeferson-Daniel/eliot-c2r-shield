@@ -70,8 +70,20 @@ Neste momento de maturação metodológica, **não existe módulo de Autenticaç
 Você deve rodar dois serviços simultaneamente na sua máquina (Frontend na porta `8080/5173` e Backend na porta `3001`). O guia completo em formato de tutorial acadêmico está presente em [docs/executando_localmente.md](docs/executando_localmente.md). A versão resumida segue abaixo:
 
 ### 4.1 Requisitos e Banco de Dados
+O projeto oferece dois modos de inicialização do banco de dados, desenhados para não gerar atritos em revisões acadêmicas:
+
+**Modo Avaliação SBSeg (Recomendado via Docker)**
+Este é o modo ideal para uma avaliação rápida e isolada.
+1. Instale o Docker Desktop.
+2. Na raiz do projeto, suba o container PostgreSQL isolado na porta `5432`:
+   ```bash
+   docker compose up -d
+   ```
+*(Para desligar após os testes: `docker compose down`)*
+
+**Modo Desenvolvimento (Manual)**
 - Node.js v20+ e PostgreSQL (porta 5432).
-- Crie um banco local: `CREATE DATABASE eliot_db;`
+- Crie um banco local manualmente: `CREATE DATABASE eliot_db;`
 
 ### 4.2 Executando o Backend e Seed
 1. `cd backend`
