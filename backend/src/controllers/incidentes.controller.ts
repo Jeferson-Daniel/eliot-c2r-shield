@@ -47,8 +47,8 @@ export const createIncidente = async (req: Request, res: Response) => {
     });
 
     res.status(201).json(newIncidente);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erro ao criar incidente' });
+  } catch (error: any) {
+    console.error("Erro Prisma POST /incidentes:", error);
+    res.status(500).json({ error: 'Erro ao criar incidente', details: error.message, stack: error.stack });
   }
 };

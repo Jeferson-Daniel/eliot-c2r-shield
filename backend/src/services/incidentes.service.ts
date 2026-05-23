@@ -22,5 +22,14 @@ export const getIncidenteById = async (id: number) => {
 };
 
 export const createIncidente = async (data: any) => {
-  return await prisma.incidente.create({ data });
+  const maxInc = await prisma.incidente.aggregate({
+    _max: { id_incidente: true }
+  });
+  const nextId = (maxInc._max.id_incidente || 0) + 1;
+  return await prisma.incidente.create({ 
+    data: {
+      ...data,
+      id_incidente: nextId
+    } 
+  });
 };

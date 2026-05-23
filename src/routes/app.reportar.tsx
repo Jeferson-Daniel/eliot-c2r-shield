@@ -53,13 +53,10 @@ function ReportPage() {
       
       toast.success("Reporte enviado para triagem!", { description: "Sua contribuição fortalece a segurança coletiva da instituição." });
       navigate({ to: "/app/meus-reportes" });
-    } catch (err) {
-      console.warn("API offline, fallback local acionado", err);
-      // Fallback: simula carregamento local
-      setTimeout(() => {
-        toast.success("Reporte registrado localmente!", { description: "A API falhou, mas seu relato está salvo na sessão." });
-        navigate({ to: "/app/meus-reportes" });
-      }, 800);
+    } catch (err: any) {
+      console.error("Erro completo da API:", err);
+      setSubmitting(false);
+      toast.error("Erro ao registrar a ocorrência", { description: err.message || "Não foi possível conectar ao banco de dados." });
     }
   }
 
