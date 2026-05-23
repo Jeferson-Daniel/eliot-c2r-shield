@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHeader } from "@/components/eliot/AppShell";
 import { Avatar } from "@/components/eliot/Sidebar";
-import { users, levelProgress } from "@/data/mock";
+import { users as mockUsers, levelProgress } from "@/data/mock";
 import { Crown, Medal, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
+import { api } from "@/services/api";
 
 export const Route = createFileRoute("/app/ranking")({
   head: () => ({ meta: [{ title: "Ranking Institucional — ELIOT" }] }),
@@ -11,7 +13,21 @@ export const Route = createFileRoute("/app/ranking")({
 });
 
 function RankingPage() {
-  const sorted = [...users].sort((a, b) => b.xp - a.xp);
+  const [rankingData, setRankingData] = useState(mockUsers);
+
+  useEffect(() => {
+    api.getRanking()
+      .then((data) => {
+        if (data && data.length > 0) {
+          setRankingData(data);
+        }
+      })
+      .catch((err) => {
+        console.warn("Usando mock devido a falha na API de ranking:", err);
+      });
+  }, []);
+
+  const sorted = [...rankingData].sort((a, b) => b.xp - a.xp);
   const top3 = sorted.slice(0, 3);
   const rest = sorted.slice(3);
 

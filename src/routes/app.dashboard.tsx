@@ -8,8 +8,9 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { api } from "@/services/api";
 
 export const Route = createFileRoute("/app/dashboard")({
   head: () => ({ meta: [{ title: "Centro Operacional — ELIOT" }] }),
@@ -22,6 +23,21 @@ function Dashboard() {
   const myBadges = BADGES.filter((b) => currentUser.badges.includes(b.slug)).slice(0, 4);
 
   const [selectedBadge, setSelectedBadge] = useState<typeof BADGES[0] | null>(null);
+
+  const [dashboardData, setDashboardData] = useState({
+    totalUsuarios: users.length,
+    totalIncidentes: myIncidents.length,
+    incidentesResolvidos: myIncidents.filter(i => i.status === "Validado" || i.status === "Concluído").length,
+    incidentesPendentes: 1
+  });
+
+  useEffect(() => {
+    api.getDashboardResumo()
+      .then(data => {
+        if (data) setDashboardData(data);
+      })
+      .catch(err => console.warn("Usando mock para dashboard:", err));
+  }, []);
 
   // Dicas reescritas como Radar Operacional
   const radarItems = [
@@ -48,10 +64,10 @@ function Dashboard() {
            
            <div className="flex flex-wrap items-center gap-3 pt-5">
              <div className="inline-flex items-center gap-1.5 rounded-full bg-success/10 px-3 py-1.5 text-[0.7rem] font-bold uppercase tracking-widest text-success ring-1 ring-inset ring-success/20 transition-all hover:bg-success/20">
-               <ShieldCheck className="size-3.5" /> 4 Incidentes validados
+               <ShieldCheck className="size-3.5" /> {dashboardData.incidentesResolvidos} Incidentes validados
              </div>
              <div className="inline-flex items-center gap-1.5 rounded-full bg-warning/10 px-3 py-1.5 text-[0.7rem] font-bold uppercase tracking-widest text-warning ring-1 ring-inset ring-warning/20 transition-all hover:bg-warning/20">
-               <Zap className="size-3.5" /> 1 Ocorrência em análise
+               <Zap className="size-3.5" /> {dashboardData.incidentesPendentes} Ocorrência{dashboardData.incidentesPendentes !== 1 ? 's' : ''} em análise
              </div>
              <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1.5 text-[0.7rem] font-bold uppercase tracking-widest text-primary ring-1 ring-inset ring-primary/20 transition-all hover:bg-primary/20">
                <TrendingUp className="size-3.5" /> Engajamento crescente
@@ -92,7 +108,7 @@ function Dashboard() {
                 </div>
                 <div className="h-2.5 rounded-full bg-secondary/60 overflow-hidden ring-1 ring-inset ring-border/60 shadow-inner">
                   <div className="h-full rounded-full bg-gradient-to-r from-primary to-info relative transition-[width] duration-1000 ease-out" style={{ width: `${pct}%` }}>
-                     <div className="absolute inset-0 bg-white/20 animate-pulse" />
+                     <div className="absolute inset-0 bg-cyan-500/20 animate-pulse" />
                   </div>
                 </div>
               </div>
@@ -101,16 +117,16 @@ function Dashboard() {
 
           <div className="grid grid-cols-3 gap-4 w-full lg:w-auto shrink-0">
              <div className="flex flex-col justify-center rounded-2xl bg-secondary/30 border border-border/60 p-4 text-center transition-all hover:bg-secondary/50 hover:border-border hover:-translate-y-0.5 shadow-sm">
-               <div className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-muted-foreground mb-1">Meus Reportes</div>
-               <div className="text-3xl font-display font-bold text-foreground">{myIncidents.length}</div>
+               <div className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-muted-foreground mb-1">Total Incidentes</div>
+               <div className="text-3xl font-display font-bold text-foreground">{dashboardData.totalIncidentes}</div>
              </div>
              <div className="flex flex-col justify-center rounded-2xl bg-success/5 border border-success/20 p-4 text-center transition-all hover:bg-success/10 hover:-translate-y-0.5 shadow-sm">
                <div className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-success/80 mb-1">Ameaças Validadas</div>
-               <div className="text-3xl font-display font-bold text-success">{myIncidents.filter(i => i.status === "Validado" || i.status === "Concluído").length}</div>
+               <div className="text-3xl font-display font-bold text-success">{dashboardData.incidentesResolvidos}</div>
              </div>
              <div className="flex flex-col justify-center rounded-2xl bg-primary/5 border border-primary/20 p-4 text-center transition-all hover:bg-primary/10 hover:-translate-y-0.5 shadow-sm">
-               <div className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-primary/80 mb-1">Posição Global</div>
-               <div className="text-3xl font-display font-bold text-primary">#{users.sort((a,b)=>b.xp-a.xp).findIndex(u=>u.id===currentUser.id)+1}</div>
+               <div className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-primary/80 mb-1">Total Usuários</div>
+               <div className="text-3xl font-display font-bold text-primary">{dashboardData.totalUsuarios}</div>
              </div>
           </div>
         </div>
@@ -296,7 +312,7 @@ function Dashboard() {
         <SheetContent className="w-full sm:max-w-md overflow-y-auto p-0 border-l border-border/60">
           {selectedBadge && (
             <div className="animate-in fade-in slide-in-from-right-4 duration-300">
-              <SheetHeader className="px-6 py-8 border-b border-border/60 bg-secondary/10 flex flex-col items-center text-center">
+              <SheetHeader className="px-6 py-8 border-b border-border/60 bg-[#07111f] flex flex-col items-center text-center">
                 <div className="grid size-16 place-items-center rounded-[1.25rem] bg-background text-primary ring-1 ring-inset ring-border/50 mb-4 shadow-sm">
                   <Award className="size-7" />
                 </div>
@@ -307,7 +323,7 @@ function Dashboard() {
               <div className="p-6 space-y-8">
                 <section>
                   <div className="text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground mb-3">Contexto da Conquista</div>
-                  <p className="text-sm leading-relaxed text-foreground/90">
+                  <p className="text-sm leading-relaxed text-slate-300">
                     Este reconhecimento é concedido por participação ativa na identificação de ocorrências, fortalecendo as barreiras de segurança e a cultura preventiva da nossa instituição.
                   </p>
                 </section>
@@ -315,7 +331,7 @@ function Dashboard() {
                 <section className="rounded-2xl border border-border/80 bg-card p-5 shadow-sm space-y-4">
                   <div>
                     <div className="text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground mb-1">Critério de Obtenção</div>
-                    <div className="text-sm font-medium text-foreground">{selectedBadge.description}</div>
+                    <div className="text-sm font-medium text-slate-100">{selectedBadge.description}</div>
                   </div>
                   <div className="h-px w-full bg-border/60" />
                   <div className="flex items-center justify-between">
@@ -325,7 +341,7 @@ function Dashboard() {
                     </div>
                     <div className="text-right">
                       <div className="text-[0.65rem] font-bold uppercase tracking-widest text-muted-foreground mb-1">Data</div>
-                      <div className="text-xs font-semibold text-foreground">Out 2023</div>
+                      <div className="text-xs font-semibold text-slate-100">Out 2023</div>
                     </div>
                   </div>
                 </section>

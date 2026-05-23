@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import type { IncidentCategory, IncidentSeverity } from "@/types/eliot";
 import { cn } from "@/lib/utils";
+import { api } from "@/services/api";
 
 const CATS: IncidentCategory[] = ["Phishing","Malware","Link suspeito","Engenharia social","Vazamento de dados","Acesso indevido","Anexo suspeito","Outro"];
 const SEVS: IncidentSeverity[] = ["Baixa","Média","Alta","Crítica"];
@@ -23,7 +24,10 @@ export const Route = createFileRoute("/app/reportar")({
 function ReportPage() {
   const navigate = useNavigate();
   const [severity, setSeverity] = useState<IncidentSeverity>("Média");
+  const [category, setCategory] = useState<IncidentCategory>("Phishing");
+  const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
+  const [link, setLink] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -34,13 +38,26 @@ function ReportPage() {
     setFiles((prev) => [...prev, ...list].slice(0, 5));
   }
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSubmitting(true);
-    setTimeout(() => {
+    
+    try {
+      await api.createIncidente({
+        titulo: title,
+        descricao: desc,
+        ameaca: category,
+        link_suspeito: link || undefined,
+        id_usuario_relator: 2 // Hardcoded temporário por falta de auth
+      });
+      
       toast.success("Reporte enviado para triagem!", { description: "Sua contribuição fortalece a segurança coletiva da instituição." });
       navigate({ to: "/app/meus-reportes" });
-    }, 1500);
+    } catch (err: any) {
+      console.error("Erro completo da API:", err);
+      setSubmitting(false);
+      toast.error("Erro ao registrar a ocorrência", { description: err.message || "Não foi possível conectar ao banco de dados." });
+    }
   }
 
   // Cores dinâmicas e sutis baseadas na severidade
@@ -102,13 +119,13 @@ function ReportPage() {
           <div className="relative z-10 space-y-8">
             <div className="space-y-2 group">
               <Label htmlFor="title" className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-muted-foreground/80 group-focus-within:text-primary transition-colors ml-1">Título do incidente</Label>
-              <Input id="title" required placeholder="Ex.: E-mail suspeito solicitando senha institucional" className="h-12 bg-secondary/30 border-border/60 focus:bg-background focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium" />
+              <Input id="title" required value={title} onChange={e => setTitle(e.target.value)} placeholder="Ex.: E-mail suspeito solicitando senha institucional" className="h-12 bg-secondary/30 border-border/60 focus:bg-background focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium" />
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2">
               <div className="space-y-2 group">
                 <Label className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-muted-foreground/80 group-focus-within:text-primary transition-colors ml-1">Categoria da Ameaça</Label>
-                <Select defaultValue="Phishing">
+                <Select value={category} onValueChange={(v: IncidentCategory) => setCategory(v)}>
                   <SelectTrigger className="h-12 bg-secondary/30 border-border/60 focus:bg-background focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium"><SelectValue placeholder="Selecione" /></SelectTrigger>
                   <SelectContent>
                     {CATS.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
@@ -185,7 +202,7 @@ function ReportPage() {
 
                 <div className="h-1.5 w-full rounded-full bg-primary/15 overflow-hidden shadow-inner">
                   <div className="h-full bg-primary rounded-full w-[82%] relative transition-all duration-1000">
-                    <div className="absolute inset-0 bg-white/30 animate-pulse duration-1000" />
+                    <div className="absolute inset-0 bg-primary/30 animate-pulse duration-1000" />
                   </div>
                 </div>
               </div>
@@ -193,7 +210,7 @@ function ReportPage() {
 
             <div className="space-y-2 group">
               <Label htmlFor="link" className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-muted-foreground/80 group-focus-within:text-primary transition-colors ml-1">Link suspeito (opcional)</Label>
-              <Input id="link" type="url" placeholder="https://exemplo-falso.com.br/login" className="h-12 bg-secondary/30 border-border/60 focus:bg-background focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium font-mono text-sm" />
+              <Input id="link" type="url" value={link} onChange={e => setLink(e.target.value)} placeholder="https://exemplo-falso.com.br/login" className="h-12 bg-secondary/30 border-border/60 focus:bg-background focus:border-primary/50 focus:ring-4 focus:ring-primary/10 transition-all font-medium font-mono text-sm" />
             </div>
 
             {/* 5. Upload de Evidência */}
