@@ -121,3 +121,18 @@ Com os servidores rodando, acesse no navegador:
   
 - **Tabelas faltando ou erros de schema:**
   - SoluÃ§Ã£o: No terminal do `backend/`, pare a execuÃ§Ã£o, rode `npx prisma db push` e reinicie com `npm start`.
+
+---
+
+## 7. Testes Automatizados (Selo F e Selo S)
+
+O backend possui uma suite de testes mínimos implementada com Vitest e Supertest para garantir a integridade dos endpoints (Health Check, Incidentes, Dashboard e Ranking).
+
+Para executar os testes automatizados, certifique-se de que o banco de dados PostgreSQL esteja rodando com a seed aplicada e execute os seguintes comandos:
+
+`ash
+cd backend
+npm run build
+npm test
+``n
+Você deverá ver o relatório do Vitest indicando que todos os testes de API passaram com sucesso.

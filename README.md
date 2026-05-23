@@ -113,3 +113,12 @@ A comunicação é efetuada nas seguintes rotas:
 ---
 
 **Licença MIT** - Consulte o arquivo `LICENSE` para detalhes. Desenvolvimento destinado ao Simpósio Brasileiro de Segurança (SBSeg).
+
+
+## 6. Testes Automatizados (Selo F)
+Para validar os endpoints da API de forma automatizada via Vitest/Supertest, certifique-se de ter rodado o seed no banco de dados e execute:
+``bash
+cd backend
+npm run build
+npm test
+``n

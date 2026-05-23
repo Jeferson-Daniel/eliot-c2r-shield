@@ -7,7 +7,10 @@ import { incidentesRouter } from './routes/incidentes.routes';
 import dashboardRouter from './routes/dashboard.routes';
 import rankingRouter from './routes/ranking.routes';
 
-const app = express();
+export const app = express();
+if (typeof module !== 'undefined') {
+  (module as any).exports = { app };
+}
 
 // Middlewares
 app.use(cors());
@@ -20,8 +23,12 @@ app.use('/api/incidentes', incidentesRouter);
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api/ranking', rankingRouter);
 
+
+
 const PORT = process.env.PORT || 3001;
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
