@@ -41,7 +41,7 @@ export const createIncidente = async (req: Request, res: Response) => {
       ameaca,
       link_suspeito,
       id_usuario_relator: Number(id_usuario_relator),
-      status_validacao: "Pendente",
+      status_validacao: "Em análise",
       pontos_atribuidos: 0,
       // Temporário: documentado conforme instrução de não autenticação
     });
