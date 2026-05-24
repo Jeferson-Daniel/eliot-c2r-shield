@@ -43,6 +43,7 @@ function MyReports() {
               category: ameaca,
               severity: ["Malware", "Vazamento"].includes(ameaca) ? "Crítica" : (ameaca === "Phishing" ? "Alta" : "Média"),
               status: inc?.status_validacao ?? "Pendente",
+              reporterId: inc?.id_usuario_relator?.toString() ?? "u-mock",
               reporterName: inc?.usuario_incidente_id_usuario_relatorTousuario?.nome ?? `Usuário #${inc?.id_usuario_relator ?? "Desconhecido"}`,
               reporterRole: inc?.usuario_incidente_id_usuario_relatorTousuario?.cargo ?? "Membro Institucional",
               createdAt: inc?.data_criacao ?? new Date().toISOString(),

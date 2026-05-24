@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { currentUser } from "@/data/mock";
 
 // Hook utilitário para clique fora do menu
-function useClickOutside(ref: React.RefObject<HTMLElement>, handler: () => void) {
+function useClickOutside(ref: React.RefObject<HTMLElement | null>, handler: () => void) {
   useEffect(() => {
     const listener = (event: MouseEvent | TouchEvent) => {
       if (!ref.current || ref.current.contains(event.target as Node)) {

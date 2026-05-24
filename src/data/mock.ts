@@ -72,28 +72,28 @@ export const users: AppUser[] = [
 ];
 
 const categories: IncidentCategory[] = [
-  "Phishing Institucional", "Infraestrutura Física", "Acesso Suspeito", "Engenharia Social",
-  "Vazamento de Dados", "Fraude Financeira", "Malware / Ransomware", "Outro",
+  "Phishing", "Outro", "Acesso indevido", "Engenharia social",
+  "Vazamento de dados", "Engenharia social", "Malware", "Outro",
 ] as const;
 const severities: IncidentSeverity[] = ["Baixa", "Média", "Alta", "Crítica"];
 const statuses: IncidentStatus[] = ["Pendente", "Em análise", "Validado", "Rejeitado", "Concluído"];
 
 const mockScenarios = [
-  { title: "E-mail falso solicitando renovação de credenciais do SIGAA", cat: "Phishing Institucional", link: "https://sigaa-renovacao-institucional.net" },
-  { title: "Pedido de PIX falso via WhatsApp em nome da Coordenação", cat: "Fraude Financeira" },
-  { title: "Múltiplas tentativas de login no portal docente (IP externo)", cat: "Acesso Suspeito" },
-  { title: "QR Code suspeito colado sobre informativo no bloco central", cat: "Infraestrutura Física" },
-  { title: "Planilha com dados e CPFs de alunos aberta no Google Drive", cat: "Vazamento de Dados", link: "https://docs.google.com/spreadsheets/d/public-share" },
-  { title: "Compartilhamento externo não autorizado em pasta administrativa", cat: "Vazamento de Dados" },
-  { title: "Falso suporte técnico solicitando acesso remoto (AnyDesk)", cat: "Engenharia Social" },
-  { title: "Anexo malicioso (.exe) simulando boleto de matrícula/taxa", cat: "Malware / Ransomware", link: "boleto_mensalidade_05.exe" },
-  { title: "Convite suspeito para reunião urgente no Microsoft Teams", cat: "Phishing Institucional" },
-  { title: "Desativação inesperada do MFA na conta administrativa", cat: "Acesso Suspeito" },
-  { title: "Roteador Wi-Fi clandestino detectado na biblioteca", cat: "Infraestrutura Física" },
-  { title: "Acesso em horário atípico (03:45) no laboratório de pesquisa", cat: "Acesso Suspeito" },
-  { title: "Link encurtado suspeito enviado no grupo oficial do curso", cat: "Phishing Institucional", link: "https://bit.ly/matricula-urgente" },
-  { title: "E-mail com ameaça de suspensão de bolsa se não atualizar dados", cat: "Engenharia Social" },
-  { title: "Pendrive não identificado na sala de servidores do CTIC", cat: "Infraestrutura Física" },
+  { title: "E-mail falso solicitando renovação de credenciais do SIGAA", cat: "Phishing", link: "https://sigaa-renovacao-institucional.net" },
+  { title: "Pedido de PIX falso via WhatsApp em nome da Coordenação", cat: "Engenharia social" },
+  { title: "Múltiplas tentativas de login no portal docente (IP externo)", cat: "Acesso indevido" },
+  { title: "QR Code suspeito colado sobre informativo no bloco central", cat: "Outro" },
+  { title: "Planilha com dados e CPFs de alunos aberta no Google Drive", cat: "Vazamento de dados", link: "https://docs.google.com/spreadsheets/d/public-share" },
+  { title: "Compartilhamento externo não autorizado em pasta administrativa", cat: "Vazamento de dados" },
+  { title: "Falso suporte técnico solicitando acesso remoto (AnyDesk)", cat: "Engenharia social" },
+  { title: "Anexo malicioso (.exe) simulando boleto de matrícula/taxa", cat: "Malware", link: "boleto_mensalidade_05.exe" },
+  { title: "Convite suspeito para reunião urgente no Microsoft Teams", cat: "Phishing" },
+  { title: "Desativação inesperada do MFA na conta administrativa", cat: "Acesso indevido" },
+  { title: "Roteador Wi-Fi clandestino detectado na biblioteca", cat: "Outro" },
+  { title: "Acesso em horário atípico (03:45) no laboratório de pesquisa", cat: "Acesso indevido" },
+  { title: "Link encurtado suspeito enviado no grupo oficial do curso", cat: "Link suspeito", link: "https://bit.ly/matricula-urgente" },
+  { title: "E-mail com ameaça de suspensão de bolsa se não atualizar dados", cat: "Engenharia social" },
+  { title: "Pendrive não identificado na sala de servidores do CTIC", cat: "Anexo suspeito" },
 ];
 
 function daysAgo(n: number): string {
