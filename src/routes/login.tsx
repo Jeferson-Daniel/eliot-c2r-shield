@@ -68,23 +68,33 @@ function LoginPage() {
             className="mt-8 space-y-4"
             onSubmit={(e) => {
               e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const email = formData.get("email");
+              const password = formData.get("password");
+
               setLoading(true);
               setTimeout(() => {
-                toast.success("Bem-vindo de volta", { description: "Sessão iniciada na plataforma ELIOT." });
-                navigate({ to: "/app/dashboard" });
+                setLoading(false);
+                // Login demonstrativo para avaliação do protótipo; autenticação real está fora do escopo do MVP.
+                if (email === "paulo.anjos@ifam.edu.br" && password === "demo1234") {
+                  toast.success("Bem-vindo de volta", { description: "Sessão iniciada na plataforma ELIOT." });
+                  navigate({ to: "/app/dashboard" });
+                } else {
+                  toast.error("Credenciais inválidas para o ambiente demonstrativo.");
+                }
               }, 600);
             }}
           >
             <div className="space-y-1.5">
               <Label htmlFor="email">E-mail institucional</Label>
-              <Input id="email" type="email" placeholder="nome.sobrenome@ifam.edu.br" required defaultValue="paulo.anjos@ifam.edu.br" />
+              <Input id="email" name="email" type="email" placeholder="nome.sobrenome@ifam.edu.br" required defaultValue="paulo.anjos@ifam.edu.br" />
             </div>
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Senha</Label>
                 <a className="text-xs text-muted-foreground hover:text-foreground" href="#">Esqueci minha senha</a>
               </div>
-              <Input id="password" type="password" placeholder="••••••••" required defaultValue="demo1234" />
+              <Input id="password" name="password" type="password" placeholder="••••••••" required defaultValue="demo1234" />
             </div>
             <Button type="submit" disabled={loading} className="w-full h-10 gap-2">
               {loading ? "Entrando…" : "Entrar"} <ArrowRight className="size-4" />

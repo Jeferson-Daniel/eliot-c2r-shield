@@ -61,7 +61,12 @@ O sistema foi modernizado adotando uma separação estrita entre Client (SPA) e 
 4. **Ranking e Gamificação:** Listagem de pontuações baseada nos reconhecimentos acadêmicos de participação (Insígnias de Caçador de Phishing).
 
 ### Limitações Atuais do Protótipo (Escopo Avaliativo)
-Neste momento de maturação metodológica, **não existe módulo de Autenticação/Login (JWT ou OAuth)**. Os testes e o frontend inserem dados (como o registro do autor do incidente) amarrados a perfis hardcoded (mock id) que existem garantidamente na semente do banco de dados (seed) para facilitar o teste unificado e fluido aos validadores. Upload binário de evidências no front ainda está mockado, mas a persistência no Backend já existe para arquivos/anexos baseados em hashes/URLs (schema `anexo_incidente`).
+Neste momento de maturação metodológica, **não existe módulo de Autenticação/Login (JWT ou OAuth) real**. A tela de login é apenas demonstrativa para avaliação do fluxo da interface.
+Para acessar, utilize as credenciais demonstrativas preenchidas:
+- **E-mail:** paulo.anjos@ifam.edu.br
+- **Senha:** demo1234
+
+Os testes e o frontend inserem dados (como o registro do autor do incidente) amarrados a perfis hardcoded (mock id) que existem garantidamente na semente do banco de dados (seed) para facilitar o teste unificado e fluido aos validadores. Upload binário de evidências no front ainda está mockado, mas a persistência no Backend já existe para arquivos/anexos baseados em hashes/URLs (schema `anexo_incidente`).
 
 ---
 
