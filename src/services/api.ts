@@ -8,7 +8,7 @@ export const api = {
         throw new Error('Falha ao buscar ranking');
       }
       const data = await response.json();
-      
+
       // Mapear o formato do backend para o formato do AppUser do frontend
       return data.map((user: any) => ({
         id: String(user.id_usuario),
@@ -57,6 +57,21 @@ export const api = {
       return await response.json();
     } catch (error) {
       console.error('Erro na API createIncidente:', error);
+      throw error;
+    }
+  },
+
+  async updateIncidenteStatus(id: string | number, status_validacao: string) {
+    try {
+      const response = await fetch(`${API_URL}/incidentes/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status_validacao }),
+      });
+      if (!response.ok) throw new Error('Falha ao atualizar status do incidente');
+      return await response.json();
+    } catch (error) {
+      console.error('Erro na API updateIncidenteStatus:', error);
       throw error;
     }
   },

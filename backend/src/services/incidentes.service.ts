@@ -26,10 +26,17 @@ export const createIncidente = async (data: any) => {
     _max: { id_incidente: true }
   });
   const nextId = (maxInc._max.id_incidente || 0) + 1;
-  return await prisma.incidente.create({ 
+  return await prisma.incidente.create({
     data: {
       ...data,
       id_incidente: nextId
-    } 
+    }
+  });
+};
+
+export const updateIncidenteStatus = async (id: number, status: string) => {
+  return await prisma.incidente.update({
+    where: { id_incidente: id },
+    data: { status_validacao: status }
   });
 };

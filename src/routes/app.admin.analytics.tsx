@@ -85,7 +85,7 @@ function AnalyticsOperationalPage() {
     .sort((a, b) => {
       const dateA = new Date(a.createdAt ?? 0).getTime();
       const dateB = new Date(b.createdAt ?? 0).getTime();
-      
+
       if (sortBy === "Mais recentes") return dateB - dateA;
       if (sortBy === "Mais antigos") return dateA - dateB;
       if (sortBy === "Maior severidade") {
@@ -119,7 +119,7 @@ function AnalyticsOperationalPage() {
               className="pl-10 h-10 bg-background shadow-sm"
             />
           </div>
-          
+
           <Popover>
             <PopoverTrigger asChild>
               <Button variant="outline" className="gap-2 h-10 shrink-0 relative transition-colors">
@@ -250,12 +250,35 @@ function AnalyticsOperationalPage() {
         </div>
       </div>
 
-      <IncidentDrawer incident={selected} onClose={() => setSelected(null)} />
+      <IncidentDrawer incident={selected} onClose={() => setSelected(null)} onUpdateStatus={(id, status) => {
+        setLiveIncidents(prev => prev.map(inc => inc.id === id ? { ...inc, status } : inc));
+      }} />
     </div>
   );
 }
 
-function IncidentDrawer({ incident, onClose }: { incident: Incident | null; onClose: () => void }) {
+function IncidentDrawer({ incident, onClose, onUpdateStatus }: { incident: Incident | null; onClose: () => void; onUpdateStatus: (id: string, status: string) => void }) {
+  const handleStatusUpdate = async (status: string) => {
+    if (!incident) return;
+    try {
+      const numId = incident.id.replace("INC-", "");
+      await api.updateIncidenteStatus(numId, status);
+      
+      onUpdateStatus(incident.id, status);
+      if (status === "Validado") {
+        toast.success("Reporte validado!", { description: "Incidente atualizado e pontos atribuídos ao usuário." });
+      } else {
+        toast.message("Reporte arquivado", { description: "Status alterado com sucesso." });
+      }
+      onClose();
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao atualizar", { description: "O servidor não respondeu. Operação mantida no modo local." });
+      // Mantém fallback atualizando só a UI localmente se a API falhar
+      onUpdateStatus(incident.id, status);
+      onClose();
+    }
+  };
   return (
     <Sheet open={!!incident} onOpenChange={(o) => !o && onClose()}>
       <SheetContent className="w-full sm:max-w-xl overflow-y-auto p-0 border-l border-border/60">
@@ -305,10 +328,10 @@ function IncidentDrawer({ incident, onClose }: { incident: Incident | null; onCl
               </section>
 
               <div className="grid grid-cols-2 gap-3 pt-4 border-t border-border/60">
-                <Button variant="outline" className="gap-2 h-11" onClick={() => { toast.message("Reporte arquivado", { description: "Nenhuma ação foi necessária." }); onClose(); }}>
+                <Button variant="outline" className="gap-2 h-11" onClick={() => handleStatusUpdate("Arquivado")}>
                   <X className="size-4" /> Arquivar
                 </Button>
-                <Button className="gap-2 h-11 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5" onClick={() => { toast.success("Reporte validado!", { description: "150 pontos foram atribuídos ao usuário." }); onClose(); }}>
+                <Button className="gap-2 h-11 shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5" onClick={() => handleStatusUpdate("Validado")}>
                   <Check className="size-4" /> Validar Incidente
                 </Button>
               </div>

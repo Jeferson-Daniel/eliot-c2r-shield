@@ -14,7 +14,7 @@ describe('Testes de API - ELIOT C2R SHIELD', () => {
     const response = await request(app).get('/api/incidentes');
     expect(response.status).toBe(200);
     expect(Array.isArray(response.body)).toBe(true);
-    
+
     // Assumimos que o banco já tem a seed, logo o array deve ter ao menos 1 item
     if (response.body.length > 0) {
       const primeiro = response.body[0];
@@ -28,7 +28,7 @@ describe('Testes de API - ELIOT C2R SHIELD', () => {
   it('Deve retornar o resumo do dashboard com métricas numéricas', async () => {
     const response = await request(app).get('/api/dashboard/resumo');
     expect(response.status).toBe(200);
-    
+
     // Verifica se os campos básicos existem
     expect(response.body).toHaveProperty('totalUsuarios');
     expect(response.body).toHaveProperty('totalIncidentes');
@@ -50,6 +50,35 @@ describe('Testes de API - ELIOT C2R SHIELD', () => {
       expect(usuario).toHaveProperty('id_usuario');
       expect(usuario).toHaveProperty('nome');
       expect(usuario).toHaveProperty('pontuacao_total');
+    }
+  });
+
+  it('Deve atualizar o status do incidente via PUT', async () => {
+    // Pegar o primeiro incidente existente para não quebrar com ID inexistente
+    const listResponse = await request(app).get('/api/incidentes');
+    if (listResponse.body.length > 0) {
+      const incidenteId = listResponse.body[0].id_incidente;
+
+      const updateResponse = await request(app)
+        .put(`/api/incidentes/${incidenteId}/status`)
+        .send({ status_validacao: "Validado" });
+      
+      expect(updateResponse.status).toBe(200);
+      expect(updateResponse.body.status_validacao).toBe("Validado");
+    }
+  });
+
+  it('Deve retornar erro 400 se o status for inválido', async () => {
+    const listResponse = await request(app).get('/api/incidentes');
+    if (listResponse.body.length > 0) {
+      const incidenteId = listResponse.body[0].id_incidente;
+
+      const updateResponse = await request(app)
+        .put(`/api/incidentes/${incidenteId}/status`)
+        .send({ status_validacao: "Hackeado" });
+      
+      expect(updateResponse.status).toBe(400);
+      expect(updateResponse.body.error).toBe('Status inválido');
     }
   });
 
