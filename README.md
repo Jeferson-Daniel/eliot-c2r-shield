@@ -90,7 +90,7 @@ Este é o modo ideal para uma avaliação rápida e isolada.
 - Node.js v20+ e PostgreSQL (porta 5432).
 - Crie um banco local manualmente: `CREATE DATABASE eliot_db;`
 
-Nota: Use isso apenas se a opção anterior falhar e não houver outras alternativas; ou se você quiser desenvolver um banco de dados manualmente.
+Nota: Use isso apenas se a opção anterior falhar e não houver outras alternativas.
 
 ### 4.2 Executando o Backend e Seed
 1. Entre na pasta backend e instale o npm
