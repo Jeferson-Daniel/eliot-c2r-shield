@@ -103,8 +103,8 @@ Este é o modo ideal para uma avaliação rápida e isolada.
    npx prisma db push
    npx prisma generate
    npm run seed
+   npm start
    ```
-5. `npm start` *(API online)*
 
 ### 4.3 Executando o Frontend
 Em uma nova aba do terminal:
