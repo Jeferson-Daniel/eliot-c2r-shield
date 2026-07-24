@@ -106,9 +106,9 @@ Este é o modo ideal para uma avaliação rápida e isolada.
    ```
 
 5. API Online
-```bash
-npm start
-```
+   ```bash
+   npm start
+   ```
 
 ### 4.3 Executando o Frontend
 Em uma nova aba do terminal:
