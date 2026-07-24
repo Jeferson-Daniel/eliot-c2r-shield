@@ -93,19 +93,14 @@ Este é o modo ideal para uma avaliação rápida e isolada.
 ### 4.2 Executando o Backend e Seed
 1. `cd backend`
 2. `npm install`
-3. Crie e ajuste o arquivo `.env` a partir do exemplo fornecido:
-   ```bash
-   cp .env.example .env
-   ```
-   *Edite no `.env`: `DATABASE_URL="postgresql://SEU_USER:SUA_SENHA@localhost:5432/eliot_db"`*
-4. Execute e popule o banco (isso criará as tabelas e inserirá o histórico necessário):
+3. Execute e popule o banco (isso criará as tabelas e inserirá o histórico necessário):
    ```bash
    npx prisma db push
    npx prisma generate
    npm run seed
    ```
 
-5. API Online
+4. API Online
    ```bash
    npm start
    ```
@@ -118,7 +113,10 @@ Em uma nova aba do terminal:
    ```bash
    cp .env.example .env
    ```
-4. `npm run dev`
+4. Inicializar a Plataforma
+   ```bash
+   npm run dev
+   ```
 
 Pronto, a aplicação estará viva e consumindo dados operacionais.
 
