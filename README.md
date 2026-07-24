@@ -93,16 +93,19 @@ Este é o modo ideal para uma avaliação rápida e isolada.
 Nota: Use isso apenas se a opção anterior falhar e não houver outras alternativas; ou se você quiser desenvolver um banco de dados manualmente.
 
 ### 4.2 Executando o Backend e Seed
-1. `cd backend`
-2. `npm install`
-3. Execute e popule o banco (isso criará as tabelas e inserirá o histórico necessário):
+1. Entre na pasta backend e instale o npm
+   ```bash
+   cd backend
+   npm install
+   ```
+2. Execute e popule o banco (isso criará as tabelas e inserirá o histórico necessário):
    ```bash
    npx prisma db push
    npx prisma generate
    npm run seed
    ```
 
-4. API Online
+3. API Online
    ```bash
    npm start
    ```
