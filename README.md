@@ -101,6 +101,7 @@ Este é o modo ideal para uma avaliação rápida e isolada.
 4. Execute e popule o banco (isso criará as tabelas e inserirá o histórico necessário):
    ```bash
    npx prisma db push
+   npx prisma generate
    npm run seed
    ```
 5. `npm start` *(API online)*
