@@ -107,13 +107,16 @@ Este é o modo ideal para uma avaliação rápida e isolada.
 
 ### 4.3 Executando o Frontend
 Em uma nova aba do terminal:
-1. Volte para a raiz do repositório
-2. `npm install`
-3. Crie o arquivo `.env` do Front:
+1. Volte para a raiz do repositório e instale o npm
+   ```bash
+   cd ..
+   npm install
+   ```
+2. Crie o arquivo `.env` do Front:
    ```bash
    cp .env.example .env
    ```
-4. Inicializar a Plataforma
+3. Inicializar a Plataforma
    ```bash
    npm run dev
    ```
