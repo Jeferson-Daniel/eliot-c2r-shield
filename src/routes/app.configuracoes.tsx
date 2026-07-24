@@ -28,6 +28,7 @@ export const Route = createFileRoute("/app/configuracoes")({
 });
 
 function Settings() {
+  const [name, setName] = useState(currentUser.name);
   const [hasChanges, setHasChanges] = useState(false);
   const prog = levelProgress(currentUser.xp);
 
@@ -103,8 +104,8 @@ function Settings() {
             <div className="space-y-2.5 group">
               <Label className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-muted-foreground/80 group-focus-within:text-primary transition-colors ml-1">Nome Completo</Label>
               <Input 
-                defaultValue={currentUser.name} 
-                onChange={simulateChange}
+                value={name} 
+                onChange={(e) => { setName(e.target.value); simulateChange(); }}
                 className="h-11 bg-secondary/30 border-border/80 focus:bg-background focus:border-primary/50 focus:ring-4 focus:ring-primary/10 hover:border-primary/40 transition-all font-medium" 
               />
             </div>
@@ -246,7 +247,11 @@ function Settings() {
                 Cancelar
               </Button>
               <Button 
-                onClick={() => { setHasChanges(false); toast.success("Configurações salvas com sucesso!"); }} 
+                onClick={() => { 
+                  currentUser.name = name; 
+                  setHasChanges(false); 
+                  toast.success("Configurações salvas com sucesso!"); 
+                }} 
                 className="h-10 flex-1 sm:flex-none px-6 text-xs font-bold shadow-md transition-all hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5"
               >
                 Salvar alterações

@@ -48,7 +48,7 @@ function ReportPage() {
         descricao: desc,
         ameaca: category,
         link_suspeito: link || undefined,
-        id_usuario_relator: 2 // Hardcoded temporário por falta de auth
+        id_usuario_relator: 1 // Hardcoded temporário para o login demonstrativo de Paulo Anjos
       });
       
       toast.success("Reporte enviado para triagem!", { description: "Sua contribuição fortalece a segurança coletiva da instituição." });
