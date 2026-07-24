@@ -121,7 +121,7 @@ Em uma nova aba do terminal:
    ```bash
    cp .env.example .env
    ```
-3. Inicializar a Plataforma
+3. Inicialize a Plataforma
    ```bash
    npm run dev
    ```
